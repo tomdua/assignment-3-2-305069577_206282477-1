@@ -24,7 +24,7 @@ router.post(
         parseInt(process.env.bcrypt_saltRounds)
       );
       await DButils.execQuery(
-        `INSERT INTO dbo.users VALUES (default, '${req.body.username}', '${hash_password}')`
+        `INSERT INTO dbo.users VALUES ('${req.body.username}','${hash_password}','${req.body.firstname}','${req.body.lastname}','${req.body.img}') `
       );
       res.status(201).send({ message: "user created", success: true });
     } catch (error) {

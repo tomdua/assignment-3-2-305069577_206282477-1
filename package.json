@@ -1,15 +1,13 @@
 {
-  "name": "lab9",
+  "name": "ass3",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start_Task": "node codes/task/main.js",
-    "start_solution": "node codes/solution/main.js",
     "start": "node codes/solution/main.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Tom_Almog",
   "license": "ISC",
   "dependencies": {
     "axios": "^0.19.2",

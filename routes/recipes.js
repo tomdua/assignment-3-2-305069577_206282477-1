@@ -13,6 +13,34 @@ router.get("/Information", async (req, res, next) => {
   }
 });
 
+router.get("/random", async (req, res, next) => {
+try{
+  const random_response = await axios.get(`${api_domain}/random`, {
+    params: {
+      number:3,
+      apiKey: process.env.spooncular_apiKey
+    }
+  });
+  let recipes = await Promise.all(
+    random_response.data.recipes.map((recipe_raw) =>
+      getRecipeInfo(recipe_raw.id)
+    )
+  );
+
+  recipes = recipes.map((recipe) => recipe.data);
+  const u_recipes = recipes.map((recipe) => {
+    return {
+      vegetarian: recipe.vegetarian,
+      vegan: recipe.vegan,
+      image: recipe.image
+    }
+  })
+  res.send({ u_recipes });
+  } catch (error) {
+    next(error);
+  }
+});
+
 //#region example1 - make serach endpoint
 router.get("/search", async (req, res, next) => {
   try {
@@ -24,22 +52,29 @@ router.get("/search", async (req, res, next) => {
         diet: diet,
         intolerances: intolerances,
         number: number,
-        instructionsRequired: true,
         apiKey: process.env.spooncular_apiKey
       }
     });
     let recipes = await Promise.all(
       search_response.data.results.map((recipe_raw) =>
         getRecipeInfo(recipe_raw.id)
-      )
+      ) 
     );
     recipes = recipes.map((recipe) => recipe.data);
-    res.send({ data: recipes });
+    //#endregion
+    const u_recipes = recipes.map((recipe) => {
+      return {
+        vegetarian: recipe.vegetarian,
+        vegan: recipe.vegan,
+        image: recipe.image
+      }
+    })
+    res.send({ u_recipes });
   } catch (error) {
     next(error);
   }
 });
-//#endregion
+
 
 function getRecipeInfo(id) {
   return axios.get(`${api_domain}/${id}/information`, {
