@@ -10,6 +10,45 @@ router.use(function requireLogin(req, res, next) {
   }
 });
 
+
+router.post("/family_recipe", async (req, res, next) => {
+  try {
+    await DButils.execQuery(
+      `INSERT INTO dbo.familyRecipes VALUES ('${req.user_id}', '${req.body.recipeOwner}', '${req.body.eventTimer}', '${req.body.instruction}')`
+    );
+    res.send({ sucess: true, cookie_valid: req.username && 1 });
+  } catch (error) {
+    next(error);
+  }
+});
+
+
+router.get("/personal_recipes", function (req, res) {
+  res.send(req.originalUrl);
+});
+
+router.post("/personal_recipe", async (req, res, next) => {
+  try {
+    await DButils.execQuery(
+      `INSERT INTO dbo.recipes VALUES ('${req.user_id}', '${req.body.recipe_name}')`
+    );
+    res.send({ sucess: true, cookie_valid: req.username && 1 });
+  } catch (error) {
+    next(error);
+  }
+});
+
+
+router.get("/favorites", function (req, res) {
+  res.send(req.originalUrl);
+});
+
+
+
+
+
+
+
 //#region global simple
 // router.use((req, res, next) => {
 //   const { cookie } = req.body;
@@ -28,13 +67,9 @@ router.use(function requireLogin(req, res, next) {
 // });
 //#endregion
 
-router.get("/favorites", function (req, res) {
-  res.send(req.originalUrl);
-});
 
-router.get("/personalRecipes", function (req, res) {
-  res.send(req.originalUrl);
-});
+
+
 
 //#region example2 - make add Recipe endpoint
 
@@ -66,16 +101,7 @@ router.get("/personalRecipes", function (req, res) {
 // });
 //#endregion
 
-router.post("/addPersonalRecipe", async (req, res, next) => {
-  try {
-    await DButils.execQuery(
-      `INSERT INTO dbo.recipes VALUES (default, '${req.user_id}', '${req.body.recipe_name}')`
-    );
-    res.send({ sucess: true, cookie_valid: req.username && 1 });
-  } catch (error) {
-    next(error);
-  }
-});
+
 //#endregion
 
 module.exports = router;

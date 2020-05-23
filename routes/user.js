@@ -2,29 +2,44 @@ var express = require("express");
 var router = express.Router();
 const DButils = require("../modules/DButils");
 const bcrypt = require("bcrypt");
-const { RegisterValidationRules, validate } = require("../modules/validator");
+//const { RegisterValidationRules, validate } = require("../modules/validator");
 
-router.post(
-  "/Register",
-  RegisterValidationRules,
-  validate,
-  async (req, res, next) => {
+
+// //const countriesList = document.getElementById("countries");
+// let countries; // will contain "fetched" data
+// //countriesList.addEventListener("change", newCountrySelection);
+
+// // function newCountrySelection(event) {
+// //   displayCountryInfo(event.target.value);
+// // }
+// fetch("https://restcountries.eu/rest/v2/all")
+// .then(res => res.json())
+// .then(data => initialize(data))
+// .catch(err => console.log("Error:", err));
+
+// function initialize(countriesData) {
+//   countries = countriesData;
+//   let options = "";
+//   countries.forEach(country => options+=`<option value="${country.alpha3Code}">${country.name}</option>`);
+//   //countriesList.innerHTML = options; when will be html
+//   //countriesList.selectedIndex = Math.floor(Math.random()*countriesList.length);
+//  // displayCountryInfo(countriesList[countriesList.selectedIndex].value);
+// }
+
+
+router.post("/register", async (req, res, next) => {
     try {
-      // parameters exists
-      // valid parameters
       // username exists
       const users = await DButils.execQuery("SELECT username FROM dbo.users");
-
       if (users.find((x) => x.username === req.body.username))
         throw { status: 409, message: "Username taken" };
-
       // add the new username
       let hash_password = bcrypt.hashSync(
         req.body.password,
         parseInt(process.env.bcrypt_saltRounds)
       );
       await DButils.execQuery(
-        `INSERT INTO dbo.users VALUES ('${req.body.username}','${hash_password}','${req.body.firstname}','${req.body.lastname}','${req.body.img}') `
+        `INSERT INTO dbo.users VALUES ('${req.body.username}','${hash_password}','${req.body.firstname}','${req.body.lastname}','${req.body.country}','${req.body.email}','${req.body.imageURL}')`
       );
       res.status(201).send({ message: "user created", success: true });
     } catch (error) {
@@ -33,7 +48,7 @@ router.post(
   }
 );
 
-router.post("/Login", async (req, res, next) => {
+router.post("/login", async (req, res, next) => {
   try {
     // check that username exists
     const users = await DButils.execQuery("SELECT username FROM dbo.users");
@@ -63,9 +78,9 @@ router.post("/Login", async (req, res, next) => {
   }
 });
 
-router.post("/Logout", function (req, res) {
-  req.session.reset(); // reset the session info --> send cookie when  req.session == undefined!!
-  res.send({ success: true, message: "logout succeeded" });
-});
+// router.post("/Logout", function (req, res) {
+//   req.session.reset(); // reset the session info --> send cookie when  req.session == undefined!!
+//   res.send({ success: true, message: "logout succeeded" });
+// });
 
 module.exports = router;
