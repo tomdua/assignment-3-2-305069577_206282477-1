@@ -1,12 +1,22 @@
 require("dotenv").config();
-//#region express configures
-var express = require("express");
-var path = require("path");
-var logger = require("morgan");
-const session = require("client-sessions");
+const path = require("path");
 const DButils = require("./modules/DButils");
 
-var app = express();
+
+//#Libearies importing
+const express = require("express");
+const logger = require("morgan");
+const session = require("client-sessions");
+const bodyParser = require("body-parser");
+
+//#Routes importing
+const user = require("./routes/user");
+const profile = require("./routes/profile");
+const recipes = require("./routes/recipes");
+
+//#App setting and config
+const port = process.env.PORT || "3000";
+const app = express();
 app.use(logger("dev")); //logger
 app.use(express.json()); // parse application/json
 app.use(
@@ -21,11 +31,7 @@ app.use(
 app.use(express.urlencoded({ extended: false })); // parse application/x-www-form-urlencoded
 app.use(express.static(path.join(__dirname, "public"))); //To serve static files such as images, CSS files, and JavaScript files
 
-var port = process.env.PORT || "3000";
-//#endregion
-const user = require("./routes/user");
-const profile = require("./routes/profile");
-const recipes = require("./routes/recipes");
+
 
 //#region cookie middleware
 app.use(function (req, res, next) {
@@ -49,6 +55,11 @@ app.get("/", (req, res) => res.send("welcome"));
 app.use("/user", user);
 app.use("/profile", profile);
 app.use("/recipes", recipes);
+//app.use(auth);
+
+app.use((req,res)=>{
+  res.sendStatus(404);
+});
 
 app.use(function (err, req, res, next) {
   console.error(err);
