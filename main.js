@@ -22,8 +22,9 @@ app.use(express.urlencoded({ extended: false })); // parse application/x-www-for
 app.use(express.static(path.join(__dirname, "public"))); //To serve static files such as images, CSS files, and JavaScript files
 
 var port = process.env.PORT || "3000";
+
 //#endregion
-const user = require("./routes/user");
+const userAuth = require('./routes/userAuth');
 const profile = require("./routes/profile");
 const recipes = require("./routes/recipes");
 
@@ -46,7 +47,7 @@ app.use(function (req, res, next) {
 
 app.get("/", (req, res) => res.send("welcome"));
 
-app.use("/user", user);
+app.use(userAuth);
 app.use("/profile", profile);
 app.use("/recipes", recipes);
 
