@@ -77,6 +77,7 @@ router.get("/search", async (req, res, next) => {
         like: recipe.aggregateLikes,
         readyInMinutes: recipe.readyInMinutes,
         veryPopular: recipe.veryPopular
+        
       }
     })
     res.send({ u_recipes });
