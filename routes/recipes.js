@@ -30,9 +30,14 @@ try{
   recipes = recipes.map((recipe) => recipe.data);
   const u_recipes = recipes.map((recipe) => {
     return {
-      vegetarian: recipe.vegetarian,
-      vegan: recipe.vegan,
-      image: recipe.image
+      image: recipe.image,
+        title: recipe.title,
+        vegetarian: recipe.vegetarian,
+        vegan: recipe.vegan,
+        glutenFree: recipe.glutenFree,
+        like: recipe.aggregateLikes,
+        readyInMinutes: recipe.readyInMinutes,
+        veryPopular: recipe.veryPopular
     }
   })
   res.send({ u_recipes });
@@ -64,9 +69,15 @@ router.get("/search", async (req, res, next) => {
     //#endregion
     const u_recipes = recipes.map((recipe) => {
       return {
+        image: recipe.image,
+        title: recipe.title,
         vegetarian: recipe.vegetarian,
         vegan: recipe.vegan,
-        image: recipe.image
+        glutenFree: recipe.glutenFree,
+        like: recipe.aggregateLikes,
+        readyInMinutes: recipe.readyInMinutes,
+        veryPopular: recipe.veryPopular
+        
       }
     })
     res.send({ u_recipes });
