@@ -2,6 +2,22 @@ var express = require("express");
 var router = express.Router();
 const DButils = require("../modules/DButils");
 
+router.use(function (req, res, next) {
+  if (req.session && req.session.user_id) {
+    DButils.execQuery("SELECT user_id FROM dbo.users")
+      .then((users) => {
+        if (users.find((x) => x.user_id === req.session.user_id)) {
+          req.user_id = req.session.user_id;
+        }
+        next();
+      })
+      .catch((error) => next(error));
+  } else {
+    next();
+  }
+});
+
+
 router.use(function requireLogin(req, res, next) {
   if (!req.user_id) {
     next({ status: 401, message: "unauthorized" });
@@ -11,12 +27,32 @@ router.use(function requireLogin(req, res, next) {
 });
 
 
+
+
+
+
+
+
 router.post("/family_recipe", async (req, res, next) => {
   try {
     await DButils.execQuery(
-      `INSERT INTO dbo.familyRecipes VALUES ('${req.user_id}', '${req.body.recipeOwner}', '${req.body.eventTimer}', '${req.body.instruction}')`
+      `INSERT INTO dbo.familyRecipes VALUES ('${req.body.recipeName}','${req.body.img}','${req.body.recipeOwner}', '${req.body.eventTime}', '${req.body.instructions}')`
+      `INSERT INTO dbo.recipesIngredients VALUES ('${req.body.ingredientsName}','${req.body.amount}')`
     );
     res.send({ sucess: true, cookie_valid: req.username && 1 });
+  } catch (error) {
+    next(error);
+  }
+});
+
+
+router.get("/family_recipe", async (req, res, next) => {
+  try {
+    const familyRecipse = (
+      await DButils.execQuery(
+        `SELECT * FROM dbo.familyRecipes WHERE user_id = '${req.user_id}'`
+        ));
+    res.send(familyRecipse);
   } catch (error) {
     next(error);
   }
@@ -45,7 +81,44 @@ router.get("/favorites", function (req, res) {
 
 
 
-
+router.get("/search", async (req, res, next) => {
+  try {
+    const { query, cuisine, diet, intolerances, number } = req.query;
+    const search_response = await axios.get(`${api_domain}/search`, {
+      params: {
+        query: query,
+        cuisine: cuisine,
+        diet: diet,
+        intolerances: intolerances,
+        number: number,
+        apiKey: process.env.spooncular_apiKey
+      }
+    });
+    let recipes = await Promise.all(
+      search_response.data.results.map((recipe_raw) =>
+        getRecipeInfo(recipe_raw.id)
+      ) 
+    );
+    recipes = recipes.map((recipe) => recipe.data);
+    //#endregion
+    const u_recipes = recipes.map((recipe) => {
+      return {
+        image: recipe.image,
+        title: recipe.title,
+        vegetarian: recipe.vegetarian,
+        vegan: recipe.vegan,
+        glutenFree: recipe.glutenFree,
+        like: recipe.aggregateLikes,
+        readyInMinutes: recipe.readyInMinutes,
+        veryPopular: recipe.veryPopular
+        
+      }
+    })
+    res.send({ u_recipes });
+  } catch (error) {
+    next(error);
+  }
+});
 
 
 
