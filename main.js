@@ -9,6 +9,7 @@ const session = require("client-sessions");
 //const bodyParser = require("body-parser");//??????
 
 //Routes importing
+const search = require('./routes/search');
 const userAuth = require('./routes/userAuth');
 const profile = require("./routes/profile");
 const recipes = require("./routes/recipes");
@@ -33,19 +34,20 @@ app.use(
 
 app.get("/", (req, res) => res.send("welcome"));
 
+
 app.use(userAuth);
+app.use(search);
 app.use("/profile", profile);
 app.use("/recipes", recipes);
-
 
 app.use((req,res)=>{
   res.sendStatus(404);
 });
 
-// app.use(function (err, req, res, next) {
-//   console.error(err);
-//   res.status(err.status || 500).send({ message: err.message, success: false });
-// });
+//if we want to throw error of the server
+app.use(function (err, req, res, next) {
+  res.status(err.status || 500).send(err.message);
+});
 
 const server = app.listen(port, () => {
   console.log(`Server listen on port ${port}`);

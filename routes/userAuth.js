@@ -39,7 +39,7 @@ router.post("/register", async (req, res, next) => {
         parseInt(process.env.bcrypt_saltRounds)
       );
       await DButils.execQuery(
-        `INSERT INTO dbo.users VALUES ('${req.body.username}','${hash_password}','${req.body.firstname}','${req.body.lastname}','${req.body.country}','${req.body.email}','${req.body.imageURL}')`
+        `INSERT INTO dbo.users VALUES (default,'${req.body.username}','${hash_password}','${req.body.first_name}','${req.body.last_name}','${req.body.country}','${req.body.email}','${req.body.image_URL}')`
       );
       res.status(201).send({ message: "user created", success: true });
     } catch (error) {
