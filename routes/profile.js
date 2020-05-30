@@ -1,6 +1,9 @@
 var express = require("express");
 var router = express.Router();
 const DButils = require("../modules/DButils");
+const axios = require("axios");
+
+const api_domain = "https://api.spoonacular.com/recipes";
 
 router.use(function (req, res, next) {
   if (req.session && req.session.user_id) {
@@ -28,7 +31,7 @@ router.use(function requireLogin(req, res, next) {
 
 
 
-//----------------------/////////////////////////////////////////////----------////////////
+/////////-----------------------------------------/////////////////////////
 router.get("/recipeInfo/{ids}", async (req, res, next) => {
   try {
     const familyRecipse = (
@@ -40,6 +43,7 @@ router.get("/recipeInfo/{ids}", async (req, res, next) => {
     next(error);
   }
 });
+/////////-----------------------------------------/////////////////////////
 
 
 
@@ -49,20 +53,11 @@ router.get("/recipeInfo/{ids}", async (req, res, next) => {
 
 router.post("/familyRecipes", async (req, res, next) => {
   try {
-    const recipeIngre = req.body.ingredients;
+    const recipeIngredients = JSON.stringify(req.body.ingredients);
     //const recipeIngrename=Object.keys(recipeIngre[0]);
     await DButils.execQuery(
-      `INSERT INTO dbo.family_recipes VALUES (default,'${req.user_id}','${req.body.recipe_name}','${req.body.recipe_owner}','${req.body.event}','${req.body.instructions}');`
+      `INSERT INTO dbo.family_recipes VALUES (default,'${req.user_id}','${req.body.recipe_name}','${req.body.recipe_owner}','${req.body.in_event}','${recipeIngredients}','${req.body.instructions}');`
     );
-  await (
-    recipeIngre.forEach(x => {
-      DButils.execQuery(
-        `INSERT INTO dbo.recipes_ingredients VALUES ('${req.user_id}','${req.body.recipe_name}','${Object.keys(x)}','${Object.values(x)}');`
-      );
-    })
-    );
-  
-
     res.send({ sucess: true});
   } catch (error) {
     next(error);
@@ -74,8 +69,7 @@ router.get("/familyRecipes", async (req, res, next) => {
   try {
     const familyRecipse = (
       await DButils.execQuery(
-        `SELECT * FROM dbo.family_recipes df LEFT JOIN dbo.recipes_ingredients ri ON df.user_id = '${req.user_id}'
-        and ri.user_id='${req.user_id}'`));
+        `SELECT * FROM dbo.family_recipes where user_id = '${req.user_id}'`));
     res.send(familyRecipse);
   } catch (error) {
     next(error);
@@ -83,35 +77,74 @@ router.get("/familyRecipes", async (req, res, next) => {
 });
 
 
-router.get("/personalRecipes", function (req, res) {
-  res.send(req.originalUrl);
-});
-
-
-router.post("/personalRecipe", async (req, res, next) => {
+router.get("/personalRecipes", async (req, res, next) => {
   try {
-    await DButils.execQuery(
-      `INSERT INTO dbo.recipes VALUES ('${req.user_id}', '${req.body.recipe_name}')`
-    );
-    res.send({ sucess: true, cookie_valid: req.username && 1 });
+    const personalRecipes = (
+      await DButils.execQuery(
+        `SELECT * FROM dbo.recipes where user_id = '${req.user_id}'`));
+    res.send(personalRecipes);
   } catch (error) {
     next(error);
   }
 });
 
 
-router.get("/favoriteRecipes", function (req, res) {
-  res.send(req.originalUrl);
+router.post("/personalRecipe", async (req, res, next) => {
+  try {
+    const recipeIngredients = JSON.stringify(req.body.ingredients);
+    //const recipeIngrename=Object.keys(recipeIngre[0]);
+    await DButils.execQuery(
+      `INSERT INTO dbo.recipes VALUES (default,'${req.user_id}','${req.body.recipe_name}','${req.body.image_URL}','${req.body.preparation_time}','${req.body.likes}','${req.body.vegan}','${req.body.glutten_free}','${recipeIngredients}','${req.body.instructions}','${req.body.dishes_number}');`
+    );
+    res.send({ sucess: true });
+  } catch (error) {
+    next(error);
+  }
+});
+
+
+router.get("/favoriteRecipes",  async (req, res, next)=> {
+  try {
+    const arr = (
+      await DButils.execQuery(
+        `SELECT favorite_recipes FROM dbo.users where user_id = '${req.user_id}'`));
+    let splited = arr[0];//.favorite_recipse;//.split(",");
+    splited=Object.values(splited);
+   // splited= JSON.stringify(splited);
+    splited= splited[0].split(",");
+    splited.pop();
+    // let recipes = await Promise.all(
+    //   splited.map((recipe_raw) =>
+    //     getRecipeInfo(recipe_raw)
+    //   )
+    // );
+
+
+
+    let recipes = await Promise.all( 
+    splited.forEach(x => {return 
+        getRecipeInfo(x)
+  } ));
+    res.send(recipes);
+  } catch (error) {
+    next(error);
+  }
 });
 
 
 
-router.post("/favoriteRecipes", async (req, res, next) => {
+router.put("/favoriteRecipes", async (req, res, next) => {
   try {
-    await DButils.execQuery(
-      `INSERT INTO dbo.recipes VALUES ('${req.user_id}', '${req.body.recipe_name}')`
+    let newRecipe = req.query.recipe_id;
+    let lastRecipes = await DButils.execQuery(
+      `SELECT favorite_recipes FROM dbo.users WHERE user_id = '${req.user_id}'`
     );
-    res.send({ sucess: true, cookie_valid: req.username && 1 });
+    let arr = [newRecipe,lastRecipes[0].favorite_recipes];
+
+    await DButils.execQuery(
+      `UPDATE dbo.users Set favorite_recipes =CAST('${arr}' AS varchar) WHERE user_id = '${req.user_id}'`
+    );
+    res.send({ sucess: true });
   } catch (error) {
     next(error);
   }
@@ -123,19 +156,14 @@ router.get("/watchedRecipes", function (req, res) {
 });
 
 
-
-router.post("/watchedRecipes", async (req, res, next) => {
-  try {
-    await DButils.execQuery(
-      `INSERT INTO dbo.recipes VALUES ('${req.user_id}', '${req.body.recipe_name}')`
-    );
-    res.send({ sucess: true, cookie_valid: req.username && 1 });
-  } catch (error) {
-    next(error);
-  }
-});
-
-
+function getRecipeInfo(id) {
+  return axios.get(`${api_domain}/${id}/information`, {
+    params: {
+      includeNutrition: false,
+      apiKey: process.env.spooncular_apiKey
+    }
+  });
+}
 
 
 

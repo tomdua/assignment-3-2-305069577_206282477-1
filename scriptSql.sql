@@ -1,7 +1,7 @@
 
 -- delete from familyRecipes WHERE recipeName='tomy2';
 
-   --  drop TABLE recipes_watched
+     drop TABLE users
 
 
 
@@ -13,7 +13,9 @@
 --     [last_name] [varchar](300) NOT NULL,
 --     [country] [varchar](300) NOT NULL,
 --     [email] [varchar](300) NOT NULL,
---     [image_URL] [varchar](300) NOT NULL
+--     [image_URL] [varchar](300) NOT NULL,
+--     [favorite_recipes] [varchar](300),
+--     [watched_recipes] [varchar](300)
 -- )
 
 
@@ -21,12 +23,13 @@
 -- 	[recipe_id] [UNIQUEIDENTIFIER] NOT NULL default NEWID(),
 -- 	[user_id] [UNIQUEIDENTIFIER] NOT NULL,
 -- 	[recipe_name] [varchar](300) NOT NULL,
---  [image_URL] [varchar](300) NOT NULL,
+--   [image_URL] [varchar](300) NOT NULL,
 -- 	[preparation_time] [integer] NOT NULL,
 -- 	[likes] [integer] NOT NULL,
 -- 	[vegan] [BIT] NOT NULL,
 -- 	[glutten_free] [BIT] NOT NULL,
---  [instructions] [varchar](300) NOT NULL,
+--   [ingredients] [varchar](300) NOT NULL,
+--   [instructions] [varchar](300) NOT NULL,
 -- 	[dishes_number] [integer] NOT NULL,
 -- 	PRIMARY KEY (recipe_id),
 -- 	FOREIGN KEY (user_id) REFERENCES users(user_id)
@@ -37,9 +40,10 @@
 -- 	[recipe_id] [UNIQUEIDENTIFIER] NOT NULL default NEWID(),
 -- 	[user_id] [UNIQUEIDENTIFIER] NOT NULL,
 -- 	[recipe_name] [varchar](300) NOT NULL,
---     [recipe_owner] [varchar](300) NOT NULL,
---     [event] [varchar](300) NOT NULL,
---     [instructions] [varchar](300) NOT NULL,
+--    [recipe_owner] [varchar](300) NOT NULL,
+--    [in_event] [varchar](300) NOT NULL,
+--    [ingredients] [varchar](300) NOT NULL,
+--    [instructions] [varchar](300) NOT NULL,
 -- 	PRIMARY KEY (recipe_id),
 -- 	FOREIGN KEY (user_id) REFERENCES users(user_id)
 -- )
