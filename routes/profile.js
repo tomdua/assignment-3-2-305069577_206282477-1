@@ -2,8 +2,8 @@ var express = require("express");
 var router = express.Router();
 const DButils = require("../modules/DButils");
 const utils= require("./utils/search_recipe");
-const axios = require("axios");
-const api_domain = "https://api.spoonacular.com/recipes";
+//const axios = require("axios");
+//const api_domain = "https://api.spoonacular.com/recipes";
 
 
 router.use(function (req, res, next) {
@@ -32,45 +32,36 @@ router.use(function requireLogin(req, res, next) {
 
 
 
-/////////-----------------------------------------/////////////////////////
-// router.get("/recipeInfo/:ids", async (req, res, next) => {
-//   try {
-//     const {ids} = req.params;
-//     const userDetails = (
-//       await DButils.execQuery(
-//         `SELECT * FROM dbo.users WHERE user_id = '${req.user_id}'`));
-//         let recipes = await Promise.all(
-//           random_response.data.recipes.map((recipe_raw) =>
-//             getRecipeInfo(recipe_raw.id)
-//           )
-//         );
+router.get("/recipeInfo/", async (req, res, next) => {
+  try {
+    const id = req.query.ids;
+    const watchedRecipesArr = (
+      await DButils.execQuery(
+        `SELECT watched_recipes FROM dbo.users WHERE user_id = '${req.user_id}'`));
+    let splitedWatched = watchedRecipesArr[0];//.favorite_recipse;//.split(",");
+    splitedWatched=Object.values(splitedWatched);
+       // splited= JSON.stringify(splited);
+    splitedWatched= splitedWatched[0].split(",");
+    splitedWatched.pop();  
+    const favoriteRecipesArr = (
+      await DButils.execQuery(
+        `SELECT favorite_recipes FROM dbo.users WHERE user_id = '${req.user_id}'`));
+    let splitedfavorite = favoriteRecipesArr[0];//.favorite_recipse;//.split(",");
+    splitedfavorite=Object.values(splitedfavorite);
+       // splited= JSON.stringify(splited);
+       splitedfavorite= splitedfavorite[0].split(",");
+       splitedfavorite.pop();      
+       recipeDetails= 
+       {
+         watched : splitedWatched.includes(id),
+         saved : splitedfavorite.includes(id)
+       }  
       
-//         recipes = recipes.map((recipe) => recipe.data);
-//         const u_recipes = recipes.map((recipe) => {
-//           return {
-//               id:
-//               : recipe.image,
-//               title: recipe.title,
-//               vegetarian: recipe.vegetarian,
-//               vegan: recipe.vegan,
-//               glutenFree: recipe.glutenFree,
-//               like: recipe.aggregateLikes,
-//               readyInMinutes: recipe.readyInMinutes,
-//               veryPopular: recipe.veryPopular,
-//              // instructions: recipe.instructions
-//           }
-//         })
-//       res.send({ u_recipes });    
-//   } catch (error) {
-//     next(error);
-//   }
-// });
-/////////-----------------------------------------/////////////////////////
-
-
-
-
-
+        res.send({ recipeDetails });    
+  } catch (error) {
+    next(error);
+  }
+});
 
 
 router.post("/familyRecipes", async (req, res, next) => {
@@ -176,19 +167,6 @@ router.put("/favoriteRecipes", async (req, res, next) => {
 router.get("/watchedRecipes", function (req, res) {
   res.send(req.originalUrl);
 });
-
-
-// function getRecipeInfo(id) {
-//   return axios.get(`${api_domain}/${id}/information`, {
-//     params: {
-//       includeNutrition: false,
-//       apiKey: process.env.spooncular_apiKey
-//     }
-//   });
-// }
-
-
-
 
 
 module.exports = router;
