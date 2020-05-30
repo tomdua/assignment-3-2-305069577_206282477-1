@@ -2,9 +2,9 @@ var express = require("express");
 var router = express.Router();
 const axios = require("axios");
 const DButils = require("../modules/DButils");
-
-
+const utils= require("./utils/search_recipe");
 const api_domain = "https://api.spoonacular.com/recipes";
+
 
 router.use(function (req, res, next) {
   if (req.session && req.session.user_id) {
@@ -25,7 +25,7 @@ router.use(function (req, res, next) {
 router.get("/information", async (req, res, next) => {
   try {
     //const ids = JSON.parse(req.params.ids);
-    const recipe = await getRecipeInfo(req.query.recipe_id);
+    const recipe = await utils.getRecipeInfo(req.query.recipe_id);
     let newRecipe = req.query.recipe_id;
     
     let lastRecipes = await DButils.execQuery(
@@ -53,7 +53,7 @@ try{
   });
   let recipes = await Promise.all(
     random_response.data.recipes.map((recipe_raw) =>
-      getRecipeInfo(recipe_raw.id)
+    utils.getRecipeInfo(recipe_raw.id)
     )
   );
 
@@ -78,13 +78,13 @@ try{
 });
 
 
-function getRecipeInfo(id) {
-  return axios.get(`${api_domain}/${id}/information`, {
-    params: {
-      includeNutrition: false,
-      apiKey: process.env.spooncular_apiKey
-    }
-  });
-}
+// function getRecipeInfo(id) {
+//   return axios.get(`${api_domain}/${id}/information`, {
+//     params: {
+//       includeNutrition: false,
+//       apiKey: process.env.spooncular_apiKey
+//     }
+//   });
+// }
 
 module.exports = router;

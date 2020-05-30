@@ -1,9 +1,10 @@
 var express = require("express");
 var router = express.Router();
 const DButils = require("../modules/DButils");
+const utils= require("./utils/search_recipe");
 const axios = require("axios");
-
 const api_domain = "https://api.spoonacular.com/recipes";
+
 
 router.use(function (req, res, next) {
   if (req.session && req.session.user_id) {
@@ -32,17 +33,38 @@ router.use(function requireLogin(req, res, next) {
 
 
 /////////-----------------------------------------/////////////////////////
-router.get("/recipeInfo/{ids}", async (req, res, next) => {
-  try {
-    const familyRecipse = (
-      await DButils.execQuery(
-        `SELECT * FROM dbo.family_recipes df LEFT JOIN dbo.recipes_ingredients ri ON df.user_id = '${req.user_id}'
-        and ri.user_id='${req.user_id}'`));
-    res.send(familyRecipse);
-  } catch (error) {
-    next(error);
-  }
-});
+// router.get("/recipeInfo/:ids", async (req, res, next) => {
+//   try {
+//     const {ids} = req.params;
+//     const userDetails = (
+//       await DButils.execQuery(
+//         `SELECT * FROM dbo.users WHERE user_id = '${req.user_id}'`));
+//         let recipes = await Promise.all(
+//           random_response.data.recipes.map((recipe_raw) =>
+//             getRecipeInfo(recipe_raw.id)
+//           )
+//         );
+      
+//         recipes = recipes.map((recipe) => recipe.data);
+//         const u_recipes = recipes.map((recipe) => {
+//           return {
+//               id:
+//               : recipe.image,
+//               title: recipe.title,
+//               vegetarian: recipe.vegetarian,
+//               vegan: recipe.vegan,
+//               glutenFree: recipe.glutenFree,
+//               like: recipe.aggregateLikes,
+//               readyInMinutes: recipe.readyInMinutes,
+//               veryPopular: recipe.veryPopular,
+//              // instructions: recipe.instructions
+//           }
+//         })
+//       res.send({ u_recipes });    
+//   } catch (error) {
+//     next(error);
+//   }
+// });
 /////////-----------------------------------------/////////////////////////
 
 
@@ -156,14 +178,14 @@ router.get("/watchedRecipes", function (req, res) {
 });
 
 
-function getRecipeInfo(id) {
-  return axios.get(`${api_domain}/${id}/information`, {
-    params: {
-      includeNutrition: false,
-      apiKey: process.env.spooncular_apiKey
-    }
-  });
-}
+// function getRecipeInfo(id) {
+//   return axios.get(`${api_domain}/${id}/information`, {
+//     params: {
+//       includeNutrition: false,
+//       apiKey: process.env.spooncular_apiKey
+//     }
+//   });
+// }
 
 
 

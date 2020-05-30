@@ -1,3 +1,5 @@
+
+
 function getRecipeInfo(id) {
     return axios.get(`${api_domain}/${id}/information`, {
       params: {
@@ -6,3 +8,6 @@ function getRecipeInfo(id) {
       }
     });
   }
+
+
+ 
