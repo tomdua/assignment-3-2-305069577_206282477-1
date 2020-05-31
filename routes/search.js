@@ -1,6 +1,7 @@
 var express = require("express");
 var router = express.Router();
-const DButils = require("../modules/DButils");
+const DButils = require("../utils/DButils");
+const utils= require("../utils/search_recipe");
 const axios = require("axios");
 
 const api_domain = "https://api.spoonacular.com/recipes";
@@ -21,7 +22,7 @@ router.get("/search", async (req, res, next) => {
       });
       let recipes = await Promise.all(
         search_response.data.results.map((recipe_raw) =>
-          getRecipeInfo(recipe_raw.id)
+         utils.getRecipeInfo(recipe_raw.id)
         ) 
       );
       recipes = recipes.map((recipe) => recipe.data);
@@ -43,13 +44,13 @@ router.get("/search", async (req, res, next) => {
     }
   });
 
-  function getRecipeInfo(id) {
-    return axios.get(`${api_domain}/${id}/information`, {
-      params: {
-        includeNutrition: false,
-        apiKey: process.env.spooncular_apiKey
-      }
-    });
-  }
+  // function getRecipeInfo(id) {
+  //   return axios.get(`${api_domain}/${id}/information`, {
+  //     params: {
+  //       includeNutrition: false,
+  //       apiKey: process.env.spooncular_apiKey
+  //     }
+  //   });
+  // }
 
   module.exports = router;

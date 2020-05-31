@@ -1,7 +1,7 @@
 var express = require("express");
 var router = express.Router();
-const DButils = require("../modules/DButils");
-const utils= require("./utils/search_recipe");
+const DButils = require("../utils/DButils");
+const utils= require("../utils/search_recipe");
 //const axios = require("axios");
 //const api_domain = "https://api.spoonacular.com/recipes";
 
@@ -32,9 +32,9 @@ router.use(function requireLogin(req, res, next) {
 
 
 
-router.get("/recipeInfo/", async (req, res, next) => {
+router.get("/recipeInfo/:ids", async (req, res, next) => {
   try {
-    const id = req.query.ids;
+    const id = req.params.ids;
     const watchedRecipesArr = (
       await DButils.execQuery(
         `SELECT watched_recipes FROM dbo.users WHERE user_id = '${req.user_id}'`));
@@ -121,23 +121,18 @@ router.get("/favoriteRecipes",  async (req, res, next)=> {
     const arr = (
       await DButils.execQuery(
         `SELECT favorite_recipes FROM dbo.users where user_id = '${req.user_id}'`));
-    let splited = arr[0];//.favorite_recipse;//.split(",");
+  
+    let splited = arr[0];
     splited=Object.values(splited);
-   // splited= JSON.stringify(splited);
     splited= splited[0].split(",");
     splited.pop();
-    // let recipes = await Promise.all(
-    //   splited.map((recipe_raw) =>
-    //     getRecipeInfo(recipe_raw)
-    //   )
-    // );
-
-
-
-    let recipes = await Promise.all( 
-    splited.forEach(x => {return 
-        getRecipeInfo(x)
-  } ));
+    
+   let recipes = await Promise.all(
+    splited.map((recipe_raw) => {
+    return utils.getRecipeInfo(parseInt(recipe_raw, 10))}
+    )
+  );
+  recipes = recipes.map((recipe) => recipe.data);
     res.send(recipes);
   } catch (error) {
     next(error);
@@ -164,8 +159,30 @@ router.put("/favoriteRecipes", async (req, res, next) => {
 });
 
 
-router.get("/watchedRecipes", function (req, res) {
-  res.send(req.originalUrl);
+router.get("/watchedRecipes", async (req, res, next)=> {
+  try {
+    const arr = (
+      await DButils.execQuery(
+        `SELECT watched_recipes FROM dbo.users where user_id = '${req.user_id}'`));
+  
+    let splited = arr[0];
+    splited=Object.values(splited);
+    splited= splited[0].split(",");
+    splited.pop();
+    splited = [...new Set(splited)];
+    splited=splited.slice(0,3);
+    
+    
+   let recipes = await Promise.all(
+    splited.map((recipe_raw) => {
+    return utils.getRecipeInfo(parseInt(recipe_raw, 10))}
+    )
+  );
+  recipes = recipes.map((recipe) => recipe.data);
+    res.send(recipes);
+  } catch (error) {
+    next(error);
+  }
 });
 
 

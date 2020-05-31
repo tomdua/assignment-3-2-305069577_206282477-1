@@ -1,8 +1,8 @@
 var express = require("express");
 var router = express.Router();
 const axios = require("axios");
-const DButils = require("../modules/DButils");
-const utils= require("./utils/search_recipe");
+const DButils = require("../utils/DButils");
+const utils= require("../utils/search_recipe");
 const api_domain = "https://api.spoonacular.com/recipes";
 
 

@@ -1,24 +1,15 @@
 var express = require("express");
 var router = express.Router();
-const DButils = require("../modules/DButils");
-//const utils= require("./utils/search_recipe");
-const axios = require("axios");
+const DButils = require("../utils/DButils");
+const utils= require("../utils/search_recipe");
 const bcrypt = require("bcrypt");
-
-function getCountries() {
-  return axios.get(`https://restcountries.eu/rest/v2/all`, {
-    params: {
-      //includeNutrition: false,
-      //apiKey: process.env.spooncular_apiKey
-    }
-  });
-}
 
 
 router.post("/register", async (req, res, next) => {
     try {
       
-    //  let countries= await getCountries();
+      TODO//when to use countries???
+      let countries= await utils.getCountries();
       const users = await DButils.execQuery("SELECT username FROM dbo.users");
       if (users.find((x) => x.username === req.body.username))
         throw { status: 409, message: "Username taken" };

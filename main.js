@@ -1,6 +1,7 @@
 require("dotenv").config();
 const path = require("path");
-const DButils = require("./modules/DButils");
+const DButils = require("./utils/DButils");
+const utils= require("./utils/search_recipe");
 
 //Libearies importing
 const express = require("express");
