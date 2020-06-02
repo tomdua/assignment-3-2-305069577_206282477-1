@@ -1,7 +1,7 @@
 
 -- delete from familyRecipes WHERE recipeName='tomy2';
 
-     drop TABLE users
+     -- drop TABLE users
 
 
 
@@ -17,6 +17,15 @@
 --     [favorite_recipes] [varchar](300),
 --     [watched_recipes] [varchar](300)
 -- )
+
+-- UPDATE users
+-- SET first_name = 'Almog', last_name = 'Sarafian', country='Israel', email='almogsa@post.bgu.ac.il'
+-- WHERE username='almogsa';
+
+-- DELETE FROM users WHERE username='almogsaa';
+
+-- ALTER TABLE recipes
+-- ADD vegetarian BIT;
 
 
 -- CREATE TABLE [dbo].[recipes](
@@ -34,6 +43,13 @@
 -- 	PRIMARY KEY (recipe_id),
 -- 	FOREIGN KEY (user_id) REFERENCES users(user_id)
 -- )
+
+
+-- UPDATE recipes
+-- SET first_name = 'Almog', last_name = 'Sarafian', country='Israel', email='almogsa@post.bgu.ac.il'
+-- WHERE username='almogsa';
+
+INSERT INTO dbo.recipes VALUES (default, '0c1c2487-f42d-49f3-b61d-bc9444e7a93b','test','test', 0, 0, 0, 0, 'test', 'test', 0);
 
 
 -- CREATE TABLE [dbo].[family_recipes](
@@ -80,3 +96,6 @@
 -- 	PRIMARY KEY (recipe_id),
 -- 	FOREIGN KEY (user_id) REFERENCES users(user_id)
 -- )
+
+
+

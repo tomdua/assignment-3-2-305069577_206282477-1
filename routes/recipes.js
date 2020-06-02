@@ -21,7 +21,7 @@ router.use(function (req, res, next) {
   }
 });
 
-
+//ad to API
 router.get("/information", async (req, res, next) => {
   try {
     //const ids = JSON.parse(req.params.ids);
@@ -51,24 +51,35 @@ try{
       apiKey: process.env.spooncular_apiKey
     }
   });
-  let recipes = await Promise.all(
-    random_response.data.recipes.map((recipe_raw) =>
-    utils.getRecipeInfo(recipe_raw.id)
-    )
-  );
+  // random_response.data.recipes.forEach(recipe => {
+  //   while(!recipe.instructions){
+  //   recipe= axios.get(`${api_domain}/random`, {
+  //     params: {
+  //       number:1,
+  //       apiKey: process.env.spooncular_apiKey
+  //     }
+  //   });
+  //   recipe=recipe.data.recipes[0];
+  // }
+  // });
 
-  recipes = recipes.map((recipe) => recipe.data);
+  // let recipes = await Promise.all(
+  //   random_response.data.recipes.map((recipe_raw) =>
+  //   utils.getRecipeInfo(recipe_raw.id)
+  //   )
+  // );  
+  let recipes = random_response.data.recipes;//.map((recipe) => recipe.data);
+
   const u_recipes = recipes.map((recipe) => {
     return {
-      image: recipe.image,
+        image: recipe.image,
         title: recipe.title,
         vegetarian: recipe.vegetarian,
         vegan: recipe.vegan,
         glutenFree: recipe.glutenFree,
         like: recipe.aggregateLikes,
         readyInMinutes: recipe.readyInMinutes,
-        veryPopular: recipe.veryPopular,
-       // instructions: recipe.instructions
+        veryPopular: recipe.veryPopular
     }
   })
   res.send({ u_recipes });
