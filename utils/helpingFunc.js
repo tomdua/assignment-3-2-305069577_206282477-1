@@ -15,13 +15,13 @@ const api_domain = "https://api.spoonacular.com/recipes";
   exports.getPrevInfo = async function (info){
     return info.map((recipe) => {
       return {
-        title: recipe.recipe_name,
-        image: recipe.image_URL,
+        image: recipe.image,
+        title: recipe.title,
         vegetarian: recipe.vegetarian,
         vegan: recipe.vegan,
-        glutenFree: recipe.glutten_free,
-        like: recipe.likes,
-        readyInMinutes: recipe.preparation_time
+        glutenFree: recipe.glutenFree,
+        likes: recipe.aggregateLikes,
+        readyInMinutes: recipe.readyInMinutes
       };
   })
 }

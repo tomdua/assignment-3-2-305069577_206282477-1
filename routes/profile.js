@@ -3,7 +3,6 @@ var router = express.Router();
 const DButils = require("../utils/DButils");
 const utils = require("../utils/helpingFunc");
 
-
 router.use(function (req, res, next) {
   if (req.session && req.session.user_id) {
     DButils.execQuery("SELECT user_id FROM dbo.users")
@@ -114,7 +113,7 @@ router.get("/personalRecipes", async (req, res, next) => {
       `SELECT * FROM dbo.recipes where user_id = '${req.user_id}' and type = 'personal'`
     );
     const personalRecipesP = await utils.getPrevInfo(personalRecipes);
-   /* const personalRecipesP = personalRecipes.map((recipe) => {
+    /* const personalRecipesP = personalRecipes.map((recipe) => {
       return {
         image: recipe.image,
         title: recipe.title,
@@ -139,8 +138,8 @@ router.get("/personalRecipes/:id", async (req, res, next) => {
     const personalRecipes = await DButils.execQuery(
       `SELECT * FROM recipes  WHERE user_id = '${req.user_id}' and type='personal'`
     );
-   personalRecipes[0].ingredients = JSON.parse(personalRecipes[0].ingredients);
-    
+    personalRecipes[0].ingredients = JSON.parse(personalRecipes[0].ingredients);
+
     res.send(personalRecipes);
   } catch (error) {
     next(error);
@@ -176,20 +175,23 @@ router.get("/favoriteRecipes", async (req, res, next) => {
         return utils.getRecipeInfo(parseInt(recipe_raw, 10));
       })
     );
-    recipes = recipes.map((recipe) => recipe.data);
-    
-    const u_recipes = recipes.map((recipe) => {
-      return {
-        image: recipe.image,
-        title: recipe.title,
-        vegetarian: recipe.vegetarian,
-        vegan: recipe.vegan,
-        glutenFree: recipe.glutenFree,
-        like: recipe.aggregateLikes,
-        readyInMinutes: recipe.readyInMinutes   
-      }
-    })
-    res.send( u_recipes );
+
+    const favoriteRecipesP = await utils.getPrevInfo(personalRecipes);
+
+    // recipes = recipes.map((recipe) => recipe.data);
+
+    // const u_recipes = recipes.map((recipe) => {
+    //   return {
+    //     image: recipe.image,
+    //     title: recipe.title,
+    //     vegetarian: recipe.vegetarian,
+    //     vegan: recipe.vegan,
+    //     glutenFree: recipe.glutenFree,
+    //     like: recipe.aggregateLikes,
+    //     readyInMinutes: recipe.readyInMinutes
+    //   }
+    // })
+    res.send(favoriteRecipesP);
   } catch (error) {
     next(error);
   }
@@ -228,19 +230,22 @@ router.get("/watchedRecipes", async (req, res, next) => {
         return utils.getRecipeInfo(parseInt(recipe_raw, 10));
       })
     );
-    recipes = recipes.map((recipe) => recipe.data);
-    const u_recipes = recipes.map((recipe) => {
-      return {
-        image: recipe.image,
-        title: recipe.title,
-        vegetarian: recipe.vegetarian,
-        vegan: recipe.vegan,
-        glutenFree: recipe.glutenFree,
-        like: recipe.aggregateLikes,
-        readyInMinutes: recipe.readyInMinutes   
-      }
-    })
-    res.send( u_recipes );
+
+    const watchedRecipesP = await utils.getPrevInfo(personalRecipes);
+
+    // recipes = recipes.map((recipe) => recipe.data);
+    // const u_recipes = recipes.map((recipe) => {
+    //   return {
+    //     image: recipe.image,
+    //     title: recipe.title,
+    //     vegetarian: recipe.vegetarian,
+    //     vegan: recipe.vegan,
+    //     glutenFree: recipe.glutenFree,
+    //     like: recipe.aggregateLikes,
+    //     readyInMinutes: recipe.readyInMinutes
+    //   }
+    // })
+    res.send(watchedRecipesP);
   } catch (error) {
     next(error);
   }
