@@ -8,7 +8,6 @@ const bcrypt = require("bcrypt");
 router.post("/register", async (req, res, next) => {
     try {
       
-      TODO//when to use countries???
       let countries= await utils.getCountries();
       const users = await DButils.execQuery("SELECT username FROM dbo.users");
       if (users.find((x) => x.username === req.body.username))

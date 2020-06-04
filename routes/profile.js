@@ -27,9 +27,9 @@ router.use(function requireLogin(req, res, next) {
   }
 });
 
-router.get("/recipeInfo/:ids", async (req, res, next) => {
+router.get("/recipeInfo/:id", async (req, res, next) => {
   try {
-    const id = req.params.ids;
+    const id = req.params.id;
     const watchedRecipesArr = await DButils.execQuery(
       `SELECT watched_recipes FROM dbo.users WHERE user_id = '${req.user_id}'`
     );
@@ -62,7 +62,7 @@ router.post("/familyRecipes", async (req, res, next) => {
     const recipeIngredients = JSON.stringify(req.body.ingredients);
     //const recipeIngrename=Object.keys(recipeIngre[0]);
     await DButils.execQuery(
-      `INSERT INTO dbo.family_recipes VALUES (default,'${req.user_id}','${req.body.title}','${req.body.image_URL}','${req.body.recipe_owner}','${req.body.in_event}','${recipeIngredients}','${req.body.instructions}');`
+      `INSERT INTO dbo.recipes VALUES (default,'${req.user_id}','${req.body.title}','${req.body.image_URL}','${req.body.readyInMinutes}','${req.body.likes}','${req.body.vegan}','${req.body.vegetarian}','${req.body.glutten_free}','${recipeIngredients}','${req.body.instructions}','${req.body.dishes_number}',family,'${req.body.recipe_owner}','${req.body.in_event}');`
     );
     res.send({ sucess: true });
   } catch (error) {
@@ -124,7 +124,7 @@ router.post("/personalRecipes", async (req, res, next) => {
     const recipeIngredients = JSON.stringify(req.body.ingredients);
     //const recipeIngrename=Object.keys(recipeIngre[0]);
     await DButils.execQuery(
-      `INSERT INTO dbo.recipes VALUES (default,'${req.user_id}','${req.body.title}','${req.body.image_URL}','${req.body.readyInMinutes}','${req.body.likes}','${req.body.vegan}','${req.body.vegetarian}','${req.body.glutten_free}','${recipeIngredients}','${req.body.instructions}','${req.body.dishes_number}');`
+      `INSERT INTO dbo.recipes VALUES (default,'${req.user_id}','${req.body.title}','${req.body.image_URL}','${req.body.readyInMinutes}','${req.body.likes}','${req.body.vegan}','${req.body.vegetarian}','${req.body.glutten_free}','${recipeIngredients}','${req.body.instructions}','${req.body.dishes_number}',personal,'${req.body.recipe_owner}','${req.body.in_event}');`
     );
     res.send({ sucess: true });
   } catch (error) {
