@@ -34,7 +34,10 @@ router.get("/information", async (req, res, next) => {
     await DButils.execQuery(
       `UPDATE dbo.users Set watched_recipes =CAST('${arr}' AS varchar) WHERE user_id = '${req.user_id}'`
     );
-    res.send({ data: recipe.data });
+    
+    const recipesP = await utils.getFullInfo(recipe.data);
+
+    res.send(recipesP);
   } catch (error) {
     next(error);
   }
@@ -66,7 +69,8 @@ router.get("/random", async (req, res, next) => {
     //   )
     // );
     let recipes = random_response.data.recipes; //.map((recipe) => recipe.data);
-
+    const recipesP = await utils.getPrevInfo(recipes);
+    /*
     const u_recipes = recipes.map((recipe) => {
       return {
         image: recipe.image,
@@ -78,7 +82,8 @@ router.get("/random", async (req, res, next) => {
         readyInMinutes: recipe.readyInMinutes,
       };
     });
-    res.send({ u_recipes });
+    */
+    res.send({ recipesP });
   } catch (error) {
     next(error);
   }

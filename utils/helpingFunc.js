@@ -25,6 +25,25 @@ const api_domain = "https://api.spoonacular.com/recipes";
       };
   })
 }
+
+exports.getFullInfo = async function (info){
+  return info.map((recipe) => {
+    return {
+      image: recipe.image,
+      title: recipe.title,
+      vegetarian: recipe.vegetarian,
+      vegan: recipe.vegan,
+      glutenFree: recipe.glutenFree,
+      likes: recipe.aggregateLikes,
+      readyInMinutes: recipe.readyInMinutes,
+      ingredients: recipe.ingredients,
+      instructions: recipe.instructions,
+      servings:recipe.servings,
+      recipeOwner: recipe.recipe_owner,
+      inEvent: recipe.in_event
+    };
+})
+}
   
 
   exports.getCountries = async function() {
