@@ -1,7 +1,7 @@
 var express = require("express");
 var router = express.Router();
 const DButils = require("../utils/DButils");
-const utils= require("../utils/search_recipe");
+const utils= require("../utils/helpingFunc");
 const axios = require("axios");
 const api_domain = "https://api.spoonacular.com/recipes";
 
@@ -33,7 +33,7 @@ router.get("/search", async (req, res, next) => {
           vegetarian: recipe.vegetarian,
           vegan: recipe.vegan,
           glutenFree: recipe.glutenFree,
-          like: recipe.aggregateLikes,
+          likes: recipe.aggregateLikes,
           readyInMinutes: recipe.readyInMinutes   
         }
       })

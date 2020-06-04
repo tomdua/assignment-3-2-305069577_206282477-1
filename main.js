@@ -1,7 +1,7 @@
 require("dotenv").config();
 const path = require("path");
 const DButils = require("./utils/DButils");
-const utils= require("./utils/search_recipe");
+const utils = require("./utils/helpingFunc");
 
 //Libearies importing
 const express = require("express");
@@ -10,8 +10,8 @@ const session = require("client-sessions");
 //const bodyParser = require("body-parser");//??????
 
 //Routes importing
-const search = require('./routes/search');
-const userAuth = require('./routes/userAuth');
+const search = require("./routes/search");
+const userAuth = require("./routes/userAuth");
 const profile = require("./routes/profile");
 const recipes = require("./routes/recipes");
 
@@ -25,23 +25,22 @@ app.use(
     cookieName: "session", // the cookie key name
     secret: process.env.COOKIE_SECRET, // the encryption key
     duration: 20 * 60 * 1000, // expired after 20 sec
-    activeDuration: 0 // if expiresIn < activeDuration,
+    activeDuration: 0, // if expiresIn < activeDuration,
     //the session will be extended by activeDuration milliseconds
   })
 );
 
- app.use(express.urlencoded({ extended: false })); // parse application/x-www-form-urlencoded
- app.use(express.static(path.join(__dirname, "public"))); //To serve static files such as images, CSS files, and JavaScript files
+app.use(express.urlencoded({ extended: false })); // parse application/x-www-form-urlencoded
+app.use(express.static(path.join(__dirname, "public"))); //To serve static files such as images, CSS files, and JavaScript files
 
 //app.get("/", (req, res) => res.send("welcome"));
-
 
 app.use(userAuth);
 app.use(search);
 app.use("/profile", profile);
 app.use("/recipes", recipes);
 
-app.use((req,res)=>{
+app.use((req, res) => {
   res.sendStatus(404);
 });
 
