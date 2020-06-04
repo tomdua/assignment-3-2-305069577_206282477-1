@@ -70,22 +70,38 @@ router.post("/familyRecipes", async (req, res, next) => {
   }
 });
 
+router.get("/familyRecipes/:id", async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const familyRecipes = await DButils.execQuery(
+      `SELECT * FROM dbo.recipes WHERE user_id = '${req.user_id}' and type='family'`
+    );
+    familyRecipes[0].ingredients = JSON.parse(familyRecipes[0].ingredients);
+
+    res.send(familyRecipes);
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.get("/familyRecipes", async (req, res, next) => {
   try {
     const familyRecipse = await DButils.execQuery(
-      `SELECT * FROM dbo.family_recipes where user_id = '${req.user_id}'`
+      `SELECT * FROM recipes where user_id = '${req.user_id}' and type='family'`
     );
-
-    const familyRecipseP = familyRecipse.map((recipe) => {
+    const familyRecipseP = await utils.getPrevInfo(familyRecipse);
+    /*const familyRecipseP = familyRecipse.map((recipe) => {
       return {
-        recipe_id: recipe.recipe_id,
-        title: recipe.recipe_name,
-        recipe_owner: recipe.recipe_owner,
-        InEvent: recipe.in_event,
-        ingredients: JSON.parse(recipe.ingredients),
-        instructions: recipe.instructions,
+        image: recipe.image,
+        title: recipe.title,
+        vegetarian: recipe.vegetarian,
+        vegan: recipe.vegan,
+        glutenFree: recipe.glutenFree,
+        like: recipe.aggregateLikes,
+        readyInMinutes: recipe.readyInMinutes,
       };
     });
+    */
     res.send(familyRecipseP);
   } catch (error) {
     next(error);
@@ -95,25 +111,37 @@ router.get("/familyRecipes", async (req, res, next) => {
 router.get("/personalRecipes", async (req, res, next) => {
   try {
     const personalRecipes = await DButils.execQuery(
-      `SELECT * FROM dbo.recipes where user_id = '${req.user_id}'`
+      `SELECT * FROM dbo.recipes where user_id = '${req.user_id}' and type = 'personal'`
     );
-
-    const personalRecipesP = personalRecipes.map((recipe) => {
+    const personalRecipesP = await utils.getPrevInfo(personalRecipes);
+   /* const personalRecipesP = personalRecipes.map((recipe) => {
       return {
-        recipe_id: recipe.recipe_id,
-        title: recipe.name,
-        image: recipe.image_URL,
-        readyInMinutes: recipe.preparation_time,
-        like: recipe.likes,
-        vegan: recipe.vegan,
+        image: recipe.image,
+        title: recipe.title,
         vegetarian: recipe.vegetarian,
-        gluttenfree: recipe.glutten_free,
-        ingredients: JSON.parse(recipe.ingredients),
-        instructions: recipe.instructions,
-        dishes_number: recipe.dishes_number,
+        vegan: recipe.vegan,
+        glutenFree: recipe.glutenFree,
+        like: recipe.aggregateLikes,
+        readyInMinutes: recipe.readyInMinutes,
       };
+      
     });
+    */
     res.send(personalRecipesP);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get("/personalRecipes/:id", async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const personalRecipes = await DButils.execQuery(
+      `SELECT * FROM recipes  WHERE user_id = '${req.user_id}' and type='personal'`
+    );
+   personalRecipes[0].ingredients = JSON.parse(personalRecipes[0].ingredients);
+    
+    res.send(personalRecipes);
   } catch (error) {
     next(error);
   }
@@ -149,6 +177,7 @@ router.get("/favoriteRecipes", async (req, res, next) => {
       })
     );
     recipes = recipes.map((recipe) => recipe.data);
+    
     const u_recipes = recipes.map((recipe) => {
       return {
         image: recipe.image,

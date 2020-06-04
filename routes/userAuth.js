@@ -1,7 +1,7 @@
 var express = require("express");
 var router = express.Router();
 const DButils = require("../utils/DButils");
-const utils= require("../utils/search_recipe");
+const utils= require("../utils/helpingFunc");
 const bcrypt = require("bcrypt");
 
 

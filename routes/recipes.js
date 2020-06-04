@@ -76,7 +76,6 @@ router.get("/random", async (req, res, next) => {
         glutenFree: recipe.glutenFree,
         like: recipe.aggregateLikes,
         readyInMinutes: recipe.readyInMinutes,
-        veryPopular: recipe.veryPopular,
       };
     });
     res.send({ u_recipes });
