@@ -176,21 +176,9 @@ router.get("/favoriteRecipes", async (req, res, next) => {
       })
     );
 
-    const favoriteRecipesP = await utils.getPrevInfo(personalRecipes);
-
-    // recipes = recipes.map((recipe) => recipe.data);
-
-    // const u_recipes = recipes.map((recipe) => {
-    //   return {
-    //     image: recipe.image,
-    //     title: recipe.title,
-    //     vegetarian: recipe.vegetarian,
-    //     vegan: recipe.vegan,
-    //     glutenFree: recipe.glutenFree,
-    //     like: recipe.aggregateLikes,
-    //     readyInMinutes: recipe.readyInMinutes
-    //   }
-    // })
+    recipes = recipes.map((recipe) => recipe.data);
+    const favoriteRecipesP = await utils.getPrevInfo(recipes);
+   
     res.send(favoriteRecipesP);
   } catch (error) {
     next(error);
@@ -231,20 +219,9 @@ router.get("/watchedRecipes", async (req, res, next) => {
       })
     );
 
-    const watchedRecipesP = await utils.getPrevInfo(personalRecipes);
+    recipes = recipes.map((recipe) => recipe.data);
+    const watchedRecipesP = await utils.getPrevInfo(recipes);
 
-    // recipes = recipes.map((recipe) => recipe.data);
-    // const u_recipes = recipes.map((recipe) => {
-    //   return {
-    //     image: recipe.image,
-    //     title: recipe.title,
-    //     vegetarian: recipe.vegetarian,
-    //     vegan: recipe.vegan,
-    //     glutenFree: recipe.glutenFree,
-    //     like: recipe.aggregateLikes,
-    //     readyInMinutes: recipe.readyInMinutes
-    //   }
-    // })
     res.send(watchedRecipesP);
   } catch (error) {
     next(error);

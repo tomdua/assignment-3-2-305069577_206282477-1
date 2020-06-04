@@ -34,7 +34,10 @@ router.get("/information", async (req, res, next) => {
     await DButils.execQuery(
       `UPDATE dbo.users Set watched_recipes =CAST('${arr}' AS varchar) WHERE user_id = '${req.user_id}'`
     );
-    
+
+    //  recipes = recipes.map((recipe) => recipe.data);
+    //  const watchedRecipesP = await utils.getPrevInfo(recipes);
+    //const peopleArray = Object.keys(recipe).map((i) => recipe[i]);
     const recipesP = await utils.getFullInfo(recipe.data);
 
     res.send(recipesP);
