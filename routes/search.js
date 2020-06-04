@@ -26,20 +26,8 @@ router.get("/search", async (req, res, next) => {
       );
       recipes = recipes.map((recipe) => recipe.data);
       const recipesP = await utils.getPrevInfo(recipes);
-      //#endregion
-      /*const u_recipes = recipes.map((recipe) => {
-        return {
-          image: recipe.image,
-          title: recipe.title,
-          vegetarian: recipe.vegetarian,
-          vegan: recipe.vegan,
-          glutenFree: recipe.glutenFree,
-          likes: recipe.aggregateLikes,
-          readyInMinutes: recipe.readyInMinutes   
-        }
-      })
-      */
-      res.send({ recipesP });
+   
+      res.send( recipesP );
     } catch (error) {
       next(error);
     }

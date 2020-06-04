@@ -50,7 +50,7 @@ router.get("/recipeInfo/:id", async (req, res, next) => {
       saved: splitedfavorite.includes(id),
     };
 
-    res.send({ recipeDetails });
+    res.send(recipeDetails);
   } catch (error) {
     next(error);
   }
@@ -89,18 +89,7 @@ router.get("/familyRecipes", async (req, res, next) => {
       `SELECT * FROM recipes where user_id = '${req.user_id}' and type='family'`
     );
     const familyRecipseP = await utils.getPrevInfo(familyRecipse);
-    /*const familyRecipseP = familyRecipse.map((recipe) => {
-      return {
-        image: recipe.image,
-        title: recipe.title,
-        vegetarian: recipe.vegetarian,
-        vegan: recipe.vegan,
-        glutenFree: recipe.glutenFree,
-        like: recipe.aggregateLikes,
-        readyInMinutes: recipe.readyInMinutes,
-      };
-    });
-    */
+
     res.send(familyRecipseP);
   } catch (error) {
     next(error);
@@ -113,19 +102,7 @@ router.get("/personalRecipes", async (req, res, next) => {
       `SELECT * FROM dbo.recipes where user_id = '${req.user_id}' and type = 'personal'`
     );
     const personalRecipesP = await utils.getPrevInfo(personalRecipes);
-    /* const personalRecipesP = personalRecipes.map((recipe) => {
-      return {
-        image: recipe.image,
-        title: recipe.title,
-        vegetarian: recipe.vegetarian,
-        vegan: recipe.vegan,
-        glutenFree: recipe.glutenFree,
-        like: recipe.aggregateLikes,
-        readyInMinutes: recipe.readyInMinutes,
-      };
-      
-    });
-    */
+    
     res.send(personalRecipesP);
   } catch (error) {
     next(error);
