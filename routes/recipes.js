@@ -55,7 +55,7 @@ router.get("/random", async (req, res, next) => {
       },
     });
     random_response.data.recipes.forEach((recipe) => {
-      while (recipe.instructions.length < 1) {
+      while (recipe.instructions === undefined) {
         recipe = axios.get(`${api_domain}/random`, {
           params: {
             number: 1,
