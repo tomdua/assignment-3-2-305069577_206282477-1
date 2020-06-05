@@ -61,7 +61,7 @@ router.post("/familyRecipes", async (req, res, next) => {
     const recipeIngredients = JSON.stringify(req.body.ingredients);
     //const recipeIngrename=Object.keys(recipeIngre[0]);
     await DButils.execQuery(
-      `INSERT INTO dbo.recipes VALUES (default,'${req.user_id}','${req.body.title}','${req.body.image_URL}','${req.body.readyInMinutes}','${req.body.likes}','${req.body.vegan}','${req.body.vegetarian}','${req.body.glutten_free}','${recipeIngredients}','${req.body.instructions}','${req.body.dishes_number}',family,'${req.body.recipe_owner}','${req.body.in_event}');`
+      `INSERT INTO dbo.recipes VALUES (default,'${req.user_id}','${req.body.title}','${req.body.image}','${req.body.readyInMinutes}','${req.body.aggregateLikes}','${req.body.vegan}','${req.body.vegetarian}','${req.body.gluttenFree}','${recipeIngredients}','${req.body.instructions}','${req.body.servings}','family','${req.body.recipeOwner}','${req.body.inEvent}');`
     );
     res.send({ sucess: true });
   } catch (error) {
@@ -102,7 +102,7 @@ router.get("/personalRecipes", async (req, res, next) => {
       `SELECT * FROM dbo.recipes where user_id = '${req.user_id}' and type = 'personal'`
     );
     const personalRecipesP = await utils.getPrevInfo(personalRecipes);
-    
+
     res.send(personalRecipesP);
   } catch (error) {
     next(error);
@@ -128,7 +128,7 @@ router.post("/personalRecipes", async (req, res, next) => {
     const recipeIngredients = JSON.stringify(req.body.ingredients);
     //const recipeIngrename=Object.keys(recipeIngre[0]);
     await DButils.execQuery(
-      `INSERT INTO dbo.recipes VALUES (default,'${req.user_id}','${req.body.title}','${req.body.image_URL}','${req.body.readyInMinutes}','${req.body.likes}','${req.body.vegan}','${req.body.vegetarian}','${req.body.glutten_free}','${recipeIngredients}','${req.body.instructions}','${req.body.dishes_number}',personal,'${req.body.recipe_owner}','${req.body.in_event}');`
+      `INSERT INTO dbo.recipes VALUES (default,'${req.user_id}','${req.body.title}','${req.body.image}','${req.body.readyInMinutes}','${req.body.aggregateLikes}','${req.body.vegan}','${req.body.vegetarian}','${req.body.gluttenFree}','${recipeIngredients}','${req.body.instructions}','${req.body.servings}','personal','${req.body.recipeOwner}','${req.body.inEvent}');`
     );
     res.send({ sucess: true });
   } catch (error) {
@@ -155,7 +155,7 @@ router.get("/favoriteRecipes", async (req, res, next) => {
 
     recipes = recipes.map((recipe) => recipe.data);
     const favoriteRecipesP = await utils.getPrevInfo(recipes);
-   
+
     res.send(favoriteRecipesP);
   } catch (error) {
     next(error);
