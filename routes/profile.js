@@ -73,7 +73,7 @@ router.get("/familyRecipes/:id", async (req, res, next) => {
   try {
     const id = req.params.id;
     const familyRecipes = await DButils.execQuery(
-      `SELECT * FROM dbo.recipes WHERE user_id = '${req.user_id}' and type='family'`
+      `SELECT * FROM dbo.recipes WHERE user_id = '${req.user_id}' and recipe_id='${id}' and type='family'`
     );
     familyRecipes[0].ingredients = JSON.parse(familyRecipes[0].ingredients);
 
@@ -113,7 +113,7 @@ router.get("/personalRecipes/:id", async (req, res, next) => {
   try {
     const id = req.params.id;
     const personalRecipes = await DButils.execQuery(
-      `SELECT * FROM recipes  WHERE user_id = '${req.user_id}' and type='personal'`
+      `SELECT * FROM recipes  WHERE user_id = '${req.user_id}' and recipe_id='${id}' and type='personal'`
     );
     personalRecipes[0].ingredients = JSON.parse(personalRecipes[0].ingredients);
 
