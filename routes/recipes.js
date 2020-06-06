@@ -25,7 +25,8 @@ router.get("/information", async (req, res, next) => {
     //const ids = JSON.parse(req.params.ids);
     let recipe = await utils.getRecipeInfo(req.query.recipe_id);
     let newRecipe = req.query.recipe_id;
-
+    if(req.user_id != undefined)
+    {
     let lastRecipes = await DButils.execQuery(
       `SELECT watched_recipes FROM dbo.users WHERE user_id = '${req.user_id}'`
     );
@@ -34,17 +35,7 @@ router.get("/information", async (req, res, next) => {
     await DButils.execQuery(
       `UPDATE dbo.users Set watched_recipes =CAST('${arr}' AS varchar) WHERE user_id = '${req.user_id}'`
     );
-    while (recipe.instructions === undefined) {
-      recipe = await axios.get(`${api_domain}/random`, {
-        params: {
-          number: 1,
-          apiKey: process.env.spooncular_apiKey,
-        },
-      });
-      recipe = recipe.data.recipes[0];
-    }
-
-
+  }
     const recipesP = await utils.getFullInfo(recipe.data);
 
     res.send(recipesP);

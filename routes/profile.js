@@ -145,7 +145,7 @@ router.get("/favoriteRecipes", async (req, res, next) => {
     let splited = arr[0];
     splited = Object.values(splited);
     splited = splited[0].split(",");
-    splited.pop();
+    if (splited.lenght > 1) splited.pop();
 
     let recipes = await Promise.all(
       splited.map((recipe_raw) => {
@@ -187,6 +187,7 @@ router.get("/watchedRecipes", async (req, res, next) => {
     let splited = arr[0];
     splited = Object.values(splited);
     splited = splited[0].split(",");
+    if (splited.lenght > 1)
     splited.pop();
     splited = [...new Set(splited)];
     splited = splited.slice(0, 3);
