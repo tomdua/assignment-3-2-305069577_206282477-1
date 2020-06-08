@@ -59,9 +59,10 @@ router.get("/recipeInfo/:id", async (req, res, next) => {
 router.post("/familyRecipes", async (req, res, next) => {
   try {
     const recipeIngredients = JSON.stringify(req.body.ingredients);
+    const recipeInstuctions = JSON.stringify(req.body.analyzedInstructions);
     //const recipeIngrename=Object.keys(recipeIngre[0]);
     await DButils.execQuery(
-      `INSERT INTO dbo.recipes VALUES (default,'${req.user_id}','${req.body.title}','${req.body.image}','${req.body.readyInMinutes}','${req.body.aggregateLikes}','${req.body.vegan}','${req.body.vegetarian}','${req.body.gluttenFree}','${recipeIngredients}','${req.body.instructions}','${req.body.servings}','family','${req.body.recipeOwner}','${req.body.inEvent}');`
+      `INSERT INTO dbo.recipes VALUES (default,'${req.user_id}','${req.body.title}','${req.body.image}','${req.body.readyInMinutes}','${req.body.aggregateLikes}','${req.body.vegan}','${req.body.vegetarian}','${req.body.gluttenFree}','${recipeIngredients}','${recipeInstuctions}','${req.body.servings}','family','${req.body.recipeOwner}','${req.body.inEvent}');`
     );
     res.send({ sucess: true });
   } catch (error) {
@@ -76,6 +77,8 @@ router.get("/familyRecipes/:id", async (req, res, next) => {
       `SELECT * FROM dbo.recipes WHERE user_id = '${req.user_id}' and recipe_id='${id}' and type='family'`
     );
     familyRecipes[0].ingredients = JSON.parse(familyRecipes[0].ingredients);
+    familyRecipes[0].analyzedInstructions = JSON.parse(familyRecipes[0].analyzedInstructions);
+
 
     res.send(familyRecipes);
   } catch (error) {
@@ -116,6 +119,7 @@ router.get("/personalRecipes/:id", async (req, res, next) => {
       `SELECT * FROM recipes  WHERE user_id = '${req.user_id}' and recipe_id='${id}' and type='personal'`
     );
     personalRecipes[0].ingredients = JSON.parse(personalRecipes[0].ingredients);
+    personalRecipes[0].analyzedInstructions = JSON.parse(personalRecipes[0].analyzedInstructions);
 
     res.send(personalRecipes);
   } catch (error) {
@@ -126,9 +130,11 @@ router.get("/personalRecipes/:id", async (req, res, next) => {
 router.post("/personalRecipes", async (req, res, next) => {
   try {
     const recipeIngredients = JSON.stringify(req.body.ingredients);
+    const recipeInstuctions = JSON.stringify(req.body.analyzedInstructions);
+
     //const recipeIngrename=Object.keys(recipeIngre[0]);
     await DButils.execQuery(
-      `INSERT INTO dbo.recipes VALUES (default,'${req.user_id}','${req.body.title}','${req.body.image}','${req.body.readyInMinutes}','${req.body.aggregateLikes}','${req.body.vegan}','${req.body.vegetarian}','${req.body.gluttenFree}','${recipeIngredients}','${req.body.instructions}','${req.body.servings}','personal','${req.body.recipeOwner}','${req.body.inEvent}');`
+      `INSERT INTO dbo.recipes VALUES (default,'${req.user_id}','${req.body.title}','${req.body.image}','${req.body.readyInMinutes}','${req.body.aggregateLikes}','${req.body.vegan}','${req.body.vegetarian}','${req.body.gluttenFree}','${recipeIngredients}','${recipeInstuctions}','${req.body.servings}','personal','${req.body.recipeOwner}','${req.body.inEvent}');`
     );
     res.send({ sucess: true });
   } catch (error) {
@@ -187,8 +193,7 @@ router.get("/watchedRecipes", async (req, res, next) => {
     let splited = arr[0];
     splited = Object.values(splited);
     splited = splited[0].split(",");
-    if (splited.lenght > 1)
-    splited.pop();
+    if (splited.lenght > 1) splited.pop();
     splited = [...new Set(splited)];
     splited = splited.slice(0, 3);
     let recipes = await Promise.all(

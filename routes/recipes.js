@@ -25,17 +25,16 @@ router.get("/information", async (req, res, next) => {
     //const ids = JSON.parse(req.params.ids);
     let recipe = await utils.getRecipeInfo(req.query.recipe_id);
     let newRecipe = req.query.recipe_id;
-    if(req.user_id != undefined)
-    {
-    let lastRecipes = await DButils.execQuery(
-      `SELECT watched_recipes FROM dbo.users WHERE user_id = '${req.user_id}'`
-    );
-    let arr = [newRecipe, lastRecipes[0].watched_recipes];
+    if (req.user_id != undefined) {
+      let lastRecipes = await DButils.execQuery(
+        `SELECT watched_recipes FROM dbo.users WHERE user_id = '${req.user_id}'`
+      );
+      let arr = [newRecipe, lastRecipes[0].watched_recipes];
 
-    await DButils.execQuery(
-      `UPDATE dbo.users Set watched_recipes =CAST('${arr}' AS varchar) WHERE user_id = '${req.user_id}'`
-    );
-  }
+      await DButils.execQuery(
+        `UPDATE dbo.users Set watched_recipes =CAST('${arr}' AS varchar) WHERE user_id = '${req.user_id}'`
+      );
+    }
     const recipesP = await utils.getFullInfo(recipe.data);
 
     res.send(recipesP);
@@ -52,9 +51,9 @@ router.get("/random", async (req, res, next) => {
         apiKey: process.env.spooncular_apiKey,
       },
     });
-    random_response.data.recipes.map(async(recipe) => {
+    random_response.data.recipes.map(async (recipe) => {
       while (recipe.instructions === undefined) {
-        recipe = await axios.get(`${api_domain}/random`,  {
+        recipe = await axios.get(`${api_domain}/random`, {
           params: {
             number: 1,
             apiKey: process.env.spooncular_apiKey,
@@ -64,14 +63,14 @@ router.get("/random", async (req, res, next) => {
       }
     });
 
-  
     let recipes = random_response.data.recipes; //.map((recipe) => recipe.data);
     const recipesP = await utils.getPrevInfo(recipes);
-   
+
     res.send(recipesP);
   } catch (error) {
     next(error);
   }
 });
+
 
 module.exports = router;
