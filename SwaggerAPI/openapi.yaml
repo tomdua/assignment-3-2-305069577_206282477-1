@@ -1,0 +1,585 @@
+openapi: 3.0.0
+info:
+  title: Recipes Site API
+  description: Recipes Site API
+  contact:
+    email: you@your-company.com
+  version: 2.0.0
+servers:
+- url: http://localhost:3000
+tags:
+- name: userAuth
+  description: All authentication related routes
+- name: recipes
+  description: All reciepes general info
+- name: profile
+  description: All the user's personal info
+paths:
+  /register:
+    post:
+      tags:
+      - userAuth
+      summary: Create new user
+      description: Create a new user
+      requestBody:
+        content:
+          appliction/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        "201":
+          description: successful
+        "400":
+          description: fail
+        "409":
+          description: exits username
+  /login:
+    post:
+      tags:
+      - userAuth
+      summary: login
+      description: login to user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/body'
+        required: true
+      responses:
+        "200":
+          description: successful operation
+          headers:
+            Set-Cookie:
+              style: simple
+              explode: false
+              schema:
+                type: string
+                example: session=87s97sdhgf279293f8w0e9
+        "400":
+          description: Invalid username/password supplied
+  /profile/recipeInfo/{id}:
+    get:
+      tags:
+      - profile
+      summary: recipe info
+      description: Get the user's app info on reciepes by their ids
+      parameters:
+      - name: id
+        in: path
+        description: Reciped id, for returning user data
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          example: 23
+      responses:
+        "200":
+          description: Object with the user info foreach of the sended ids
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  required:
+                  - id
+                  - saved
+                  - watched
+                  type: object
+                  properties:
+                    watched:
+                      type: boolean
+                    saved:
+                      type: boolean
+                description: User's info on reciepes. Returns a dictionary of ids
+                  as keys, and info as values
+                example:
+                  "123":
+                    watched: true
+                    saved: false
+      security:
+      - cookieAuth: []
+  /profile/watchedRecipes:
+    get:
+      tags:
+      - profile
+      summary: last recipes watched
+      description: get 3 last watched recipes
+      responses:
+        "200":
+          description: successful
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ReciepePreview'
+      security:
+      - cookieAuth: []
+  /profile/favoriteRecipes:
+    get:
+      tags:
+      - profile
+      summary: favorite recipes
+      description: show the favorite recipes of a user
+      responses:
+        "200":
+          description: successful
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ReciepePreview'
+      security:
+      - cookieAuth: []
+    put:
+      tags:
+      - profile
+      summary: favorite recipes
+      description: add recipe id to favorite list
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: integer
+            example:
+              recipe_id: "123"
+        required: true
+      responses:
+        "200":
+          description: successful
+      security:
+      - cookieAuth: []
+  /profile/personalRecipes:
+    get:
+      tags:
+      - profile
+      summary: user personal recipes
+      description: show the user's personal recipes
+      responses:
+        "200":
+          description: successful
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ReciepePreview'
+      security:
+      - cookieAuth: []
+    post:
+      tags:
+      - profile
+      summary: add new recipe
+      description: add new recipe to user's recieps
+      requestBody:
+        content:
+          appliction/json:
+            schema:
+              $ref: '#/components/schemas/fullRecipe'
+        required: true
+      responses:
+        "201":
+          description: successful
+        "400":
+          description: fail
+      security:
+      - cookieAuth: []
+  /profile/personalRecipes/{id}:
+    get:
+      tags:
+      - profile
+      summary: recipe info
+      description: Get the user's personals recipe information
+      parameters:
+      - name: id
+        in: path
+        description: Reciped id, for returning user data
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          example: 23
+      responses:
+        "200":
+          description: successful
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/fullRecipe'
+      security:
+      - cookieAuth: []
+  /profile/familyRecipes:
+    get:
+      tags:
+      - profile
+      summary: user family recipes
+      description: show the user's family recipes
+      responses:
+        "200":
+          description: successful
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ReciepePreview'
+      security:
+      - cookieAuth: []
+    post:
+      tags:
+      - profile
+      summary: family recipes
+      description: add family recipe to my recipe`s page
+      requestBody:
+        content:
+          appliction/json:
+            schema:
+              $ref: '#/components/schemas/fullRecipe'
+        required: true
+      responses:
+        "201":
+          description: successful
+        "400":
+          description: fail
+      security:
+      - cookieAuth: []
+  /profile/familyRecipes/{id}:
+    get:
+      tags:
+      - profile
+      summary: recipe info
+      description: Get the user's familys recipe information
+      parameters:
+      - name: id
+        in: path
+        description: Reciped id, for returning user data
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          example: 23
+      responses:
+        "200":
+          description: successful
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/fullRecipe'
+      security:
+      - cookieAuth: []
+  /recipes/randomRecipes:
+    get:
+      tags:
+      - recipes
+      summary: random recipes
+      description: get 3 random recipes
+      responses:
+        "200":
+          description: successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReciepePreview'
+  /recipes/information:
+    get:
+      tags:
+      - recipes
+      summary: recipe information
+      description: get the information about recipe
+      responses:
+        "200":
+          description: successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/fullRecipe'
+  /search:
+    get:
+      tags:
+      - recipes
+      summary: search for all users
+      description: Serach for a reciepie in the spoonacular API, using a search query.
+        Will return resuslts according to number param.  Can filter resutld by Cusine,
+        diet, intolerance.
+      parameters:
+      - name: searchQuery
+        in: path
+        description: The search query for searching a query in the API
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: num
+        in: path
+        description: Number of search resultls to retrieve
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          default: 5
+          enum:
+          - 5
+          - 10
+          - 15
+      - name: cuisine
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          $ref: '#/components/schemas/Cuisine'
+      - name: diet
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          $ref: '#/components/schemas/Diet'
+      - name: intolerances
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          $ref: '#/components/schemas/Intolerances'
+      responses:
+        "200":
+          description: Successful retrieved search results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReciepePreview'
+        "204":
+          description: No reciepes found for the search params
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        username:
+          type: string
+          example: tom
+        password:
+          type: string
+          example: tomdauny1!
+        first_name:
+          type: string
+          example: Tom
+        last_name:
+          type: string
+          example: duany
+        country:
+          type: string
+          example: israel
+        email:
+          type: string
+          example: tomd@gmail.com
+        image_URL:
+          type: string
+          example: www.url.jpeg
+    ReciepePreview:
+      type: object
+      properties:
+        image:
+          type: string
+          description: The reciepe image url
+        title:
+          type: string
+          description: The recipe title
+          example: pizza
+        vegeterian:
+          type: boolean
+        vegan:
+          type: boolean
+        glutenFree:
+          type: boolean
+        aggregateLikes:
+          type: integer
+          example: 205
+        readyInMinutes:
+          type: integer
+          description: Reciepe ready duration in minutes
+          example: 45
+    fullRecipe:
+      type: object
+      properties:
+        image:
+          type: string
+          example: www.url.jpeg
+        title:
+          type: string
+          example: apple cake
+        vegetarian:
+          type: boolean
+          example: true
+        vegan:
+          type: boolean
+          example: true
+        glutenFree:
+          type: boolean
+          example: true
+        aggregateLikes:
+          type: integer
+          example: 10
+        readyInMinutes:
+          type: integer
+          example: 10
+        ingredients:
+          type: array
+          example:
+          - eggs: 2
+            sugar: 2
+          items:
+            $ref: '#/components/schemas/fullRecipe_ingredients'
+        analyzedInstructions:
+          type: array
+          items:
+            $ref: '#/components/schemas/fullRecipe_analyzedInstructions'
+        servings:
+          type: integer
+          example: 4
+        recipeOwner:
+          type: string
+          example: mother
+        inEvent:
+          type: string
+          example: Hanuka
+    Cuisine:
+      type: string
+      enum:
+      - African
+      - American
+      - British
+      - Cajun
+      - Caribbean
+      - Chinese
+      - Eastern European
+      - European
+      - French
+      - German
+      - Greek
+      - Indian
+      - Irish
+      - Italian
+      - Japanese
+      - Jewish
+      - Korean
+      - Latin American
+      - Mediterranean
+      - Mexican
+      - Middle Eastern
+      - Nordic
+      - Southern
+      - Spanish
+      - Thai
+      - Vietnamese
+    Diet:
+      type: string
+      enum:
+      - Gluten Free
+      - Ketogenic
+      - Vegetarian
+      - Lacto-Vegetarian
+      - Ovo-Vegetarian
+      - Vegan
+      - Pescetarian
+      - Paleo
+      - Primal
+      - Whole30
+    Intolerances:
+      type: string
+      enum:
+      - Dairy
+      - Egg
+      - Gluten
+      - Grain
+      - Peanut
+      - Seafood
+      - Sesame
+      - Shellfish
+      - Soy
+      - Sulfite
+      - Tree Nut
+      - Wheat
+    body:
+      type: object
+      properties:
+        username:
+          maxLength: 8
+          minLength: 3
+          type: string
+          description: only letters
+        password:
+          maxLength: 10
+          minLength: 5
+          type: string
+          description: letters with a least 1 numeric character and 1 special character
+      example:
+        username: Tom
+        password: '!shalom123'
+    fullRecipe_ingredients:
+      type: object
+      properties:
+        ingredientName:
+          type: string
+        amount:
+          type: integer
+    fullRecipe_ingredients_1:
+      type: object
+      properties:
+        name:
+          type: string
+          example: salt-and-pepper
+        image:
+          type: string
+          example: salt-and-pepper.jpg
+    fullRecipe_equipment:
+      type: object
+      properties:
+        name:
+          type: string
+          example: frying pan
+        image:
+          type: string
+          example: frying pan.jpg
+    fullRecipe_steps:
+      type: object
+      properties:
+        number:
+          type: integer
+          example: 1
+        step:
+          type: string
+          example: Remove seeds and veins and wash
+        ingredients:
+          type: array
+          items:
+            $ref: '#/components/schemas/fullRecipe_ingredients_1'
+        equipment:
+          type: array
+          items:
+            $ref: '#/components/schemas/fullRecipe_equipment'
+    fullRecipe_analyzedInstructions:
+      type: object
+      properties:
+        steps:
+          type: array
+          items:
+            $ref: '#/components/schemas/fullRecipe_steps'
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      description: 'Session key to identify user session. '
+      name: session
+      in: cookie
