@@ -2,6 +2,7 @@ require("dotenv").config();
 const path = require("path");
 const DButils = require("./utils/DButils");
 const utils = require("./utils/helpingFunc");
+const cors = require("cors");
 
 //Libearies importing
 const express = require("express");
@@ -55,7 +56,6 @@ const server = app.listen(port, () => {
 
 app.use(cors());
 app.options("*", cors());
-
 
 process.on("SIGINT", function () {
   if (server) {
