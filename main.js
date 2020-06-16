@@ -4,6 +4,9 @@ const DButils = require("./utils/DButils");
 const utils = require("./utils/helpingFunc");
 const cors = require("cors");
 
+app.use(cors());
+app.options("*", cors());
+
 //Libearies importing
 const express = require("express");
 const logger = require("morgan");
@@ -45,6 +48,9 @@ app.use((req, res) => {
   res.sendStatus(404);
 });
 
+app.use(cors());
+app.options("*", cors());
+
 //if we want to throw error of the server
 app.use(function (err, req, res, next) {
   res.status(err.status || 500).send(err.message);
@@ -53,9 +59,6 @@ app.use(function (err, req, res, next) {
 const server = app.listen(port, () => {
   console.log(`Server listen on port ${port}`);
 });
-
-app.use(cors());
-app.options("*", cors());
 
 process.on("SIGINT", function () {
   if (server) {
