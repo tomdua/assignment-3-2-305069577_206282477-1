@@ -37,7 +37,7 @@ exports.getFullInfo = async function (info) {
   const anInstructions = await getAnalyzedInstructions(info.id);
   const analyzedInstructions = getAnalyzedSteps(anInstructions.data[0].steps);
  return {
-    id: recipe.id,
+    id: info.id,
     image: info.image,
     title: info.title,
     vegetarian: info.vegetarian,
