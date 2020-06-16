@@ -27,16 +27,16 @@ exports.getPrevInfo = async function (info) {
 };
 
 exports.getFullInfo = async function (info) {
-
- const recipeIngredients = info.extendedIngredients.map((ingredient) => {
- return{
-  name: ingredient.name,
-  amount: ingredient.amount,
- };
-}); 
-  const anInstructions = await getAnalyzedInstructions(info.id);
-  const analyzedInstructions = getAnalyzedSteps(anInstructions.data[0].steps);
- return {
+  const recipeIngredients = info.extendedIngredients.map((ingredient) => {
+    return {
+      name: ingredient.name,
+      amount: ingredient.amount,
+    };
+  });
+  // const anInstructions = await getAnalyzedInstructions(info.id);
+  if (info.analyzedInstructions.length > 0)
+    var analyzedInstructions = getAnalyzedSteps(info.analyzedInstructions[0].steps);
+  return {
     id: info.id,
     image: info.image,
     title: info.title,
@@ -62,9 +62,8 @@ exports.getCountries = async function () {
   });
 };
 
-
-function getAnalyzedSteps (steps) {
-    return steps.map((step) => {
+function getAnalyzedSteps(steps) {
+  return steps.map((step) => {
     let recipeIngredients = step.ingredients.map((ingredient) => {
       return {
         name: ingredient.name,
@@ -77,25 +76,23 @@ function getAnalyzedSteps (steps) {
         image: equipment.image,
       };
     });
-      return {
-        number: step.number,
-        step: step.step,
-        ingredients: recipeIngredients,
-        equipment: recipeEquipment,
-      };
-    });
-  }
+    return {
+      number: step.number,
+      step: step.step,
+      ingredients: recipeIngredients,
+      equipment: recipeEquipment,
+    };
+  });
+}
 
-  function getAnalyzedInstructions(id) {
-    return axios.get(`${api_domain}/${id}/analyzedInstructions`, {
-      params: {
-        includeNutrition: false,
-        apiKey: process.env.spooncular_apiKey
-      }
-    });
-  }
-
-
+function getAnalyzedInstructions(id) {
+  return axios.get(`${api_domain}/${id}/analyzedInstructions`, {
+    params: {
+      includeNutrition: false,
+      apiKey: process.env.spooncular_apiKey,
+    },
+  });
+}
 
 //- or we can use this:
 //module.exports ={

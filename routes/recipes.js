@@ -23,7 +23,7 @@ router.use(function (req, res, next) {
 router.get("/information", async (req, res, next) => {
   try {
     //const ids = JSON.parse(req.params.ids);
-    let recipe = await utils.getRecipeInfo(req.query.recipe_id);
+    let recipe = await utils.getRecipeInfo(req.query.id);
     let newRecipe = req.query.recipe_id;
     if (req.user_id != undefined) {
       let lastRecipes = await DButils.execQuery(
