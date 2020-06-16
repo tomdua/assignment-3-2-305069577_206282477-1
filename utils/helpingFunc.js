@@ -29,8 +29,7 @@ exports.getPrevInfo = async function (info) {
 exports.getFullInfo = async function (info) {
   const recipeIngredients = info.extendedIngredients.map((ingredient) => {
     return {
-      name: ingredient.name,
-      amount: ingredient.amount,
+      original: ingredient.original
     };
   });
   // const anInstructions = await getAnalyzedInstructions(info.id);
