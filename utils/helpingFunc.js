@@ -14,6 +14,7 @@ exports.getRecipeInfo = async function (id) {
 exports.getPrevInfo = async function (info) {
   return info.map((recipe) => {
     return {
+      id: recipe.id,
       image: recipe.image,
       title: recipe.title,
       vegetarian: recipe.vegetarian,
@@ -36,6 +37,7 @@ exports.getFullInfo = async function (info) {
   const anInstructions = await getAnalyzedInstructions(info.id);
   const analyzedInstructions = getAnalyzedSteps(anInstructions.data[0].steps);
  return {
+    id: recipe.id,
     image: info.image,
     title: info.title,
     vegetarian: info.vegetarian,
