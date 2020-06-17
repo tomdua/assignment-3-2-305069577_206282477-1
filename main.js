@@ -4,8 +4,6 @@ const DButils = require("./utils/DButils");
 const utils = require("./utils/helpingFunc");
 const cors = require("cors");
 
-
-
 //Libearies importing
 const express = require("express");
 const logger = require("morgan");
@@ -32,9 +30,14 @@ app.use(
     //the session will be extended by activeDuration milliseconds
   })
 );
-app.use(cors());
-app.options("*", cors());
 
+const corsConfig = {
+  origin: true,
+  credentials: true,
+};
+
+app.use(cors(corsConfig));
+app.options("*", cors(corsConfig));
 
 app.use(express.urlencoded({ extended: false })); // parse application/x-www-form-urlencoded
 app.use(express.static(path.join(__dirname, "public"))); //To serve static files such as images, CSS files, and JavaScript files
@@ -49,9 +52,6 @@ app.use("/recipes", recipes);
 app.use((req, res) => {
   res.sendStatus(404);
 });
-
-app.use(cors());
-app.options("*", cors());
 
 //if we want to throw error of the server
 app.use(function (err, req, res, next) {
