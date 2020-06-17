@@ -36,8 +36,12 @@ const corsConfig = {
   credentials: true,
 };
 
-app.use(cors(corsConfig));
-app.options("*", cors(corsConfig));
+app.use(cors({
+    origin: "*",
+    credentials: true
+}))
+//app.use(cors(corsConfig));
+//app.options("*", cors(corsConfig));
 
 app.use(express.urlencoded({ extended: false })); // parse application/x-www-form-urlencoded
 app.use(express.static(path.join(__dirname, "public"))); //To serve static files such as images, CSS files, and JavaScript files
