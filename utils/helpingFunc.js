@@ -12,6 +12,12 @@ exports.getRecipeInfo = async function (id) {
 };
 
 exports.getPrevInfo = async function (info) {
+  // let watched, favorite;
+  // const ans= response = await this.axios.get(
+  //     "https://recipe-tom-almog.herokuapp.com/profile/recipeInfo/:id"
+  //   );
+  
+  
   return info.map((recipe) => {
     return {
       id: recipe.id,

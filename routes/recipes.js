@@ -36,7 +36,6 @@ router.get("/information", async (req, res, next) => {
       );
     }
     const recipesP = await utils.getFullInfo(recipe.data);
-
     res.send(recipesP);
   } catch (error) {
     next(error);
@@ -62,7 +61,7 @@ router.get("/random", async (req, res, next) => {
         recipe = recipe.data.recipes[0];
       }
     });
-
+    
     let recipes = random_response.data.recipes; //.map((recipe) => recipe.data);
     const recipesP = await utils.getPrevInfo(recipes);
 
