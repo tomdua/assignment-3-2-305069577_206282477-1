@@ -43,7 +43,7 @@ router.get("/information", async (req, res, next) => {
         familyRecipes[0].analyzedInstructions = JSON.parse(
           familyRecipes[0].analyzedInstructions
         );
-        res.send(familyRecipes);
+        res.send(familyRecipes[0]);
       }
       if (personalRecipes.length > 0) {
         personalRecipes[0].ingredients = JSON.parse(
@@ -52,11 +52,13 @@ router.get("/information", async (req, res, next) => {
         personalRecipes[0].analyzedInstructions = JSON.parse(
           personalRecipes[0].analyzedInstructions
         );
-        res.send(personalRecipes);
+        res.send(personalRecipes[0]);
       }
     } else {
       let recipe = await utils.getRecipeInfo(req.query.id);
       let newRecipe = req.query.id;
+      let recipesP = await utils.getFullInfo(recipe.data);
+
       if (req.user_id != undefined) {
         let lastRecipes = await DButils.execQuery(
           `SELECT watched_recipes FROM dbo.users WHERE user_id = '${req.user_id}'`
@@ -66,32 +68,31 @@ router.get("/information", async (req, res, next) => {
         await DButils.execQuery(
           `UPDATE dbo.users Set watched_recipes =CAST('${arr}' AS varchar) WHERE user_id = '${req.user_id}'`
         );
-      }
 
-      let recipesP = await utils.getFullInfo(recipe.data);
-      // let res = await axios.get(`http://localhost:3000/profile/recipeInfo/${recipesP.id}`);
-      const watchedRecipesArr = await DButils.execQuery(
-        `SELECT watched_recipes FROM dbo.users WHERE user_id = '${req.user_id}'`
-      );
-      let splitedWatched = watchedRecipesArr[0]; //.favorite_recipse;//.split(",");
-      splitedWatched = Object.values(splitedWatched);
-      // splited= JSON.stringify(splited);
-      splitedWatched = splitedWatched[0].split(",");
-      splitedWatched.pop();
-      const favoriteRecipesArr = await DButils.execQuery(
-        `SELECT favorite_recipes FROM dbo.users WHERE user_id = '${req.user_id}'`
-      );
-      let splitedfavorite = favoriteRecipesArr[0]; //.favorite_recipse;//.split(",");
-      splitedfavorite = Object.values(splitedfavorite);
-      // splited= JSON.stringify(splited);
-      splitedfavorite = splitedfavorite[0].split(",");
-      splitedfavorite.pop();
-      recipeDetails = {
-        watched: splitedWatched.includes(recipesP.id.toString()),
-        saved: splitedfavorite.includes(recipesP.id.toString()),
-      };
-      recipesP.saved = recipeDetails.saved;
-      recipesP.watched = recipeDetails.watched;
+        // let res = await axios.get(`http://localhost:3000/profile/recipeInfo/${recipesP.id}`);
+        const watchedRecipesArr = await DButils.execQuery(
+          `SELECT watched_recipes FROM dbo.users WHERE user_id = '${req.user_id}'`
+        );
+        let splitedWatched = watchedRecipesArr[0]; //.favorite_recipse;//.split(",");
+        splitedWatched = Object.values(splitedWatched);
+        // splited= JSON.stringify(splited);
+        splitedWatched = splitedWatched[0].split(",");
+        splitedWatched.pop();
+        const favoriteRecipesArr = await DButils.execQuery(
+          `SELECT favorite_recipes FROM dbo.users WHERE user_id = '${req.user_id}'`
+        );
+        let splitedfavorite = favoriteRecipesArr[0]; //.favorite_recipse;//.split(",");
+        splitedfavorite = Object.values(splitedfavorite);
+        // splited= JSON.stringify(splited);
+        splitedfavorite = splitedfavorite[0].split(",");
+        splitedfavorite.pop();
+        recipeDetails = {
+          watched: splitedWatched.includes(recipesP.id.toString()),
+          saved: splitedfavorite.includes(recipesP.id.toString()),
+        };
+        recipesP.saved = recipeDetails.saved;
+        recipesP.watched = recipeDetails.watched;
+      }
       res.send(recipesP);
     }
   } catch (error) {
@@ -121,7 +122,34 @@ router.get("/random", async (req, res, next) => {
 
     let recipes = random_response.data.recipes; //.map((recipe) => recipe.data);
     let recipesP = await utils.getPrevInfo(recipes);
-    // let recipesP2 =await recipesP.map(async (recipe) => {
+
+    // let recipesP2 = await recipesP.map( async (recipe) => {
+    //   const watchedRecipesArr = await DButils.execQuery(
+    //     `SELECT watched_recipes FROM dbo.users WHERE user_id = '${req.user_id}'`
+    //   );
+    //   let splitedWatched = watchedRecipesArr[0]; //.favorite_recipse;//.split(",");
+    //   splitedWatched = Object.values(splitedWatched);
+    //   // splited= JSON.stringify(splited);
+    //   splitedWatched = splitedWatched[0].split(",");
+    //   splitedWatched.pop();
+    //   const favoriteRecipesArr = await DButils.execQuery(
+    //     `SELECT favorite_recipes FROM dbo.users WHERE user_id = '${req.user_id}'`
+    //   );
+    //   let splitedfavorite = favoriteRecipesArr[0]; //.favorite_recipse;//.split(",");
+    //   splitedfavorite = Object.values(splitedfavorite);
+    //   // splited= JSON.stringify(splited);
+    //   splitedfavorite = splitedfavorite[0].split(",");
+    //   splitedfavorite.pop();
+    //   recipeDetails = {
+    //     watched: splitedWatched.includes(recipesP.id.toString()),
+    //     saved: splitedfavorite.includes(recipesP.id.toString()),
+    //   };
+    //   recipe.saved = recipeDetails.saved;
+    //   recipe.watched = recipeDetails.watched;
+    // });
+
+    // console.log(recipesP2);
+
     //   const watchedRecipesArr = await DButils.execQuery(
     //     `SELECT watched_recipes FROM dbo.users WHERE user_id = '${req.user_id}'`
     //   );

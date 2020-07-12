@@ -41,6 +41,14 @@ exports.getPrevInfo = async function (info) {
   try {
     // let details = await getRecipeInfoFromDB(recipe.id);
     return info.map((recipe) => {
+      // let res = await axios.get(`http://localhost:3000/profile/recipeInfo/`, {
+      //   params: {
+      //     id: recipe.id,
+      //     // apiKey: process.env.spooncular_apiKey,
+      //   },
+      // });
+
+      // console.log(res);
       // await axios.get(`http://localhost:3000/profile/recipeInfo/${recipe.id}`);
       // let details = await axios.get(`http://localhost:3000/profile/recipeInfo/${recipe.id}`);
       // let a;
