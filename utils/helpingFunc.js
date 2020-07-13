@@ -72,11 +72,11 @@ exports.getPrevInfo = async function (info) {
 };
 
 exports.getFullInfo = async function (info) {
-  const recipeIngredients = info.extendedIngredients.map((ingredient) => {
-    return {
-      original: ingredient.original,
-    };
-  });
+  // const recipeIngredients = info.extendedIngredients.map((ingredient) => {
+  //   return {
+  //     original: ingredient.original,
+  //   };
+  // });
   // const response = await axios.get(
   //   `http://localhost:3000/profile/recipeInfo/${req.query.id}`
   //   //   {
@@ -97,7 +97,7 @@ exports.getFullInfo = async function (info) {
     glutenFree: info.glutenFree,
     aggregateLikes: info.aggregateLikes,
     readyInMinutes: info.readyInMinutes,
-    ingredients: recipeIngredients,
+    extendedIngredients: info.extendedIngredients,
     analyzedInstructions: analyzedInstructions,
     servings: info.servings,
     watched: false,

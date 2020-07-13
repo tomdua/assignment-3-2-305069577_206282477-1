@@ -142,16 +142,16 @@ router.post("/newRecipe", async (req, res, next) => {
     // const recipeInstuctions1 = JSON.stringify(req.body.analyzedInstructions);
     //const recipeIngrename=Object.keys(recipeIngre[0]);
 
-    const recipeIngredients = JSON.stringify(req.body.ingredients);
-    const recipeInstuctions = JSON.stringify(req.body.analyzedInstructions);
+    const extendedIngredients = JSON.stringify(req.body.extendedIngredients);
+    const analyzedInstructions = JSON.stringify(req.body.analyzedInstructions);
 
     if(req.body.type=="personal")
     await DButils.execQuery(
-      `INSERT INTO dbo.recipes VALUES (default,'${req.user_id}','${req.body.title}','${req.body.image}','${req.body.readyInMinutes}','${req.body.aggregateLikes}','${req.body.vegan}','${req.body.vegetarian}','${req.body.glutenFree}','${recipeIngredients}','${recipeInstuctions}','${req.body.servings}','personal','${req.body.recipeOwner}','${req.body.inEvent}');`
+      `INSERT INTO dbo.recipes VALUES (default,'${req.user_id}','${req.body.title}','${req.body.image}','${req.body.readyInMinutes}','${req.body.aggregateLikes}','${req.body.vegan}','${req.body.vegetarian}','${req.body.glutenFree}','${extendedIngredients}','${analyzedInstructions}','${req.body.servings}','personal','${req.body.recipeOwner}','${req.body.inEvent}');`
       );
     else if(req.body.type=="family")
     await DButils.execQuery(
-      `INSERT INTO dbo.recipes VALUES (default,'${req.user_id}','${req.body.title}','${req.body.image}','${req.body.readyInMinutes}','${req.body.aggregateLikes}','${req.body.vegan}','${req.body.vegetarian}','${req.body.gluttenFree}','${recipeIngredients}','${recipeInstuctions}','${req.body.servings}','family','${req.body.recipeOwner}','${req.body.inEvent}');`
+      `INSERT INTO dbo.recipes VALUES (default,'${req.user_id}','${req.body.title}','${req.body.image}','${req.body.readyInMinutes}','${req.body.aggregateLikes}','${req.body.vegan}','${req.body.vegetarian}','${req.body.gluttenFree}','${extendedIngredients}','${analyzedInstructions}','${req.body.servings}','family','${req.body.recipeOwner}','${req.body.inEvent}');`
     );
 
     //const recipeIngrename=Object.keys(recipeIngre[0]);

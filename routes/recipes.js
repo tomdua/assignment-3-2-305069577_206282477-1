@@ -39,15 +39,15 @@ router.get("/information", async (req, res, next) => {
         `SELECT * FROM recipes  WHERE user_id = '${req.user_id}' and id='${recipeID}' and type='personal'`
       );
       if (familyRecipes.length > 0) {
-        familyRecipes[0].ingredients = JSON.parse(familyRecipes[0].ingredients);
+        familyRecipes[0].extendedIngredients = JSON.parse(familyRecipes[0].extendedIngredients);
         familyRecipes[0].analyzedInstructions = JSON.parse(
           familyRecipes[0].analyzedInstructions
         );
         res.send(familyRecipes[0]);
       }
       if (personalRecipes.length > 0) {
-        personalRecipes[0].ingredients = JSON.parse(
-          personalRecipes[0].ingredients
+        personalRecipes[0].extendedIngredients = JSON.parse(
+          personalRecipes[0].extendedIngredients
         );
         personalRecipes[0].analyzedInstructions = JSON.parse(
           personalRecipes[0].analyzedInstructions
