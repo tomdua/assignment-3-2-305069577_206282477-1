@@ -100,6 +100,7 @@ exports.getFullInfo = async function (info) {
     extendedIngredients: info.extendedIngredients,
     analyzedInstructions: analyzedInstructions,
     servings: info.servings,
+    type: "public",
     watched: false,
     saved: false,
     // recipeOwner: recipe.data.recipe_owner,
