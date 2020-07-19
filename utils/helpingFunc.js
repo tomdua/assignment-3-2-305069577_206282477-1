@@ -62,8 +62,8 @@ exports.getPrevInfo = async function (info) {
         glutenFree: recipe.glutenFree,
         aggregateLikes: recipe.aggregateLikes,
         readyInMinutes: recipe.readyInMinutes,
-        watched: false,
-        saved: false,
+        // watched: false,
+        // saved: false,
       };
     });
   } catch (error) {
@@ -84,10 +84,10 @@ exports.getFullInfo = async function (info) {
   //   // }
   // );
   // const anInstructions = await getAnalyzedInstructions(info.id);
-  if (info.analyzedInstructions.length > 0)
-    var analyzedInstructions = getAnalyzedSteps(
-      info.analyzedInstructions[0].steps
-    );
+  // if (info.analyzedInstructions.length > 0)
+  //   var analyzedInstructions = getAnalyzedSteps(
+  //     info.analyzedInstructions[0].steps
+  //   );
   return {
     id: info.id,
     image: info.image,
@@ -98,11 +98,11 @@ exports.getFullInfo = async function (info) {
     aggregateLikes: info.aggregateLikes,
     readyInMinutes: info.readyInMinutes,
     extendedIngredients: info.extendedIngredients,
-    analyzedInstructions: analyzedInstructions,
+    analyzedInstructions: info.analyzedInstructions[0],
     servings: info.servings,
     type: "public",
-    watched: false,
-    saved: false,
+    // watched: false,
+    // saved: false,
     // recipeOwner: recipe.data.recipe_owner,
     // inEvent: recipe.in_event
   };

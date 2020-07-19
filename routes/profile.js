@@ -137,7 +137,6 @@ router.get("/personalRecipes/:id", async (req, res, next) => {
 
 router.post("/newRecipe", async (req, res, next) => {
   try {
-
     // const recipeIngredients1 = JSON.stringify(req.body.ingredients);
     // const recipeInstuctions1 = JSON.stringify(req.body.analyzedInstructions);
     //const recipeIngrename=Object.keys(recipeIngre[0]);
@@ -145,17 +144,17 @@ router.post("/newRecipe", async (req, res, next) => {
     const extendedIngredients = JSON.stringify(req.body.extendedIngredients);
     const analyzedInstructions = JSON.stringify(req.body.analyzedInstructions);
 
-    if(req.body.type=="personal")
-    await DButils.execQuery(
-      `INSERT INTO dbo.recipes VALUES (default,'${req.user_id}','${req.body.title}','${req.body.image}','${req.body.readyInMinutes}','${req.body.aggregateLikes}','${req.body.vegan}','${req.body.vegetarian}','${req.body.glutenFree}','${extendedIngredients}','${analyzedInstructions}','${req.body.servings}','personal','${req.body.recipeOwner}','${req.body.inEvent}');`
+    if (req.body.type == "personal")
+      await DButils.execQuery(
+        `INSERT INTO dbo.recipes VALUES (default,'${req.user_id}','${req.body.title}','${req.body.image}','${req.body.readyInMinutes}','${req.body.aggregateLikes}','${req.body.vegan}','${req.body.vegetarian}','${req.body.glutenFree}','${extendedIngredients}','${analyzedInstructions}','${req.body.servings}','personal','${req.body.recipeOwner}','${req.body.inEvent}');`
       );
-    else if(req.body.type=="family")
-    await DButils.execQuery(
-      `INSERT INTO dbo.recipes VALUES (default,'${req.user_id}','${req.body.title}','${req.body.image}','${req.body.readyInMinutes}','${req.body.aggregateLikes}','${req.body.vegan}','${req.body.vegetarian}','${req.body.gluttenFree}','${extendedIngredients}','${analyzedInstructions}','${req.body.servings}','family','${req.body.recipeOwner}','${req.body.inEvent}');`
-    );
+    else if (req.body.type == "family")
+      await DButils.execQuery(
+        `INSERT INTO dbo.recipes VALUES (default,'${req.user_id}','${req.body.title}','${req.body.image}','${req.body.readyInMinutes}','${req.body.aggregateLikes}','${req.body.vegan}','${req.body.vegetarian}','${req.body.gluttenFree}','${extendedIngredients}','${analyzedInstructions}','${req.body.servings}','family','${req.body.recipeOwner}','${req.body.inEvent}');`
+      );
 
     //const recipeIngrename=Object.keys(recipeIngre[0]);
-   
+
     res.send({ sucess: true });
   } catch (error) {
     next(error);
@@ -220,10 +219,14 @@ router.put("/favoriteRecipes", async (req, res, next) => {
     let lastRecipes = await DButils.execQuery(
       `SELECT favorite_recipes FROM dbo.users WHERE user_id = '${req.user_id}'`
     );
-    let arr = [newRecipe, lastRecipes[0].favorite_recipes];
+    let newFavorites;
+    if (lastRecipes[0].favorite_recipes != "")
+      newFavorites = newRecipe + "," + lastRecipes[0].favorite_recipes;
+    else newFavorites = newRecipe;
+
 
     await DButils.execQuery(
-      `UPDATE dbo.users Set favorite_recipes =CAST('${arr}' AS varchar) WHERE user_id = '${req.user_id}'`
+      `UPDATE dbo.users Set favorite_recipes =CAST('${newFavorites}' AS varchar) WHERE user_id = '${req.user_id}'`
     );
     res.send({ sucess: true });
   } catch (error) {
