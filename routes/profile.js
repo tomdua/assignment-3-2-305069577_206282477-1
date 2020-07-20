@@ -172,6 +172,8 @@ router.get("/favoriteRecipes", async (req, res, next) => {
     splited = splited[0].split(",");
     if (splited.lenght > 1) splited.pop();
     splited = splited.filter((x) => x);
+    splited = splited.filter((x) => x != '0');
+
     let recipes = await Promise.all(
       splited.map((recipe_raw) => {
         return utils.getRecipeInfo(parseInt(recipe_raw, 10));
@@ -224,7 +226,6 @@ router.put("/favoriteRecipes", async (req, res, next) => {
       newFavorites = newRecipe + "," + lastRecipes[0].favorite_recipes;
     else newFavorites = newRecipe;
 
-
     await DButils.execQuery(
       `UPDATE dbo.users Set favorite_recipes =CAST('${newFavorites}' AS varchar) WHERE user_id = '${req.user_id}'`
     );
@@ -244,6 +245,8 @@ router.get("/watchedRecipes", async (req, res, next) => {
     splited = splited[0].split(",");
     if (splited.lenght > 1) splited.pop();
     splited = [...new Set(splited)];
+    splited = splited.filter((x) => x != '0');
+
     splited = splited.slice(0, 3);
     let recipes = await Promise.all(
       splited.map((recipe_raw) => {

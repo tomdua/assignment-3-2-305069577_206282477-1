@@ -22,8 +22,9 @@ router.use(function (req, res, next) {
 
 router.get("/information", async (req, res, next) => {
   try {
-  
     let recipeID = req.query.id;
+    // let newRecipe = req.query.id;
+
     if (recipeID.length > 10 && req.user_id != undefined) {
       const familyRecipes = await DButils.execQuery(
         `SELECT * FROM dbo.recipes WHERE user_id = '${req.user_id}' and id='${recipeID}' and type='family'`
@@ -32,10 +33,23 @@ router.get("/information", async (req, res, next) => {
         `SELECT * FROM recipes  WHERE user_id = '${req.user_id}' and id='${recipeID}' and type='personal'`
       );
       if (familyRecipes.length > 0) {
-        familyRecipes[0].extendedIngredients = JSON.parse(familyRecipes[0].extendedIngredients);
+        familyRecipes[0].extendedIngredients = JSON.parse(
+          familyRecipes[0].extendedIngredients
+        );
         familyRecipes[0].analyzedInstructions = JSON.parse(
           familyRecipes[0].analyzedInstructions
         );
+        // let lastRecipes = await DButils.execQuery(
+        //   `SELECT watched_recipes FROM dbo.users WHERE user_id = '${req.user_id}'`
+        // );
+        // let newWatched;
+        // if (lastRecipes[0].watched_recipes != "")
+        //   newWatched = recipeID + "," + lastRecipes[0].watched_recipes;
+        // else newWatched = recipeID;
+
+        // await DButils.execQuery(
+        //   `UPDATE dbo.users Set watched_recipes =CAST('${newWatched}' AS varchar) WHERE user_id = '${req.user_id}'`
+        // );
         res.send(familyRecipes[0]);
       }
       if (personalRecipes.length > 0) {
@@ -45,6 +59,17 @@ router.get("/information", async (req, res, next) => {
         personalRecipes[0].analyzedInstructions = JSON.parse(
           personalRecipes[0].analyzedInstructions
         );
+        // let lastRecipes = await DButils.execQuery(
+        //   `SELECT watched_recipes FROM dbo.users WHERE user_id = '${req.user_id}'`
+        // );
+        // let newWatched;
+        // if (lastRecipes[0].watched_recipes != "")
+        //   newWatched = recipeID + "," + lastRecipes[0].watched_recipes;
+        // else newWatched = recipeID;
+
+        // await DButils.execQuery(
+        //   `UPDATE dbo.users Set watched_recipes =CAST('${newWatched}' AS varchar) WHERE user_id = '${req.user_id}'`
+        // );
         res.send(personalRecipes[0]);
       }
     } else {
@@ -64,12 +89,9 @@ router.get("/information", async (req, res, next) => {
         await DButils.execQuery(
           `UPDATE dbo.users Set watched_recipes =CAST('${newWatched}' AS varchar) WHERE user_id = '${req.user_id}'`
         );
-      
-         }
-        res.send(recipesP);
       }
-    
-  
+      res.send(recipesP);
+    }
   } catch (error) {
     next(error);
   }
