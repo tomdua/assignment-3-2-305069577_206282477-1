@@ -22,14 +22,7 @@ router.use(function (req, res, next) {
 
 router.get("/information", async (req, res, next) => {
   try {
-    // const response = await this.axios.get(
-    //   "http://localhost:3000/profile/recipeInfo/",
-    //     {
-    //     params: { id: req.query.id }
-    //   }
-    // );
-
-    //const ids = JSON.parse(req.params.ids);
+  
     let recipeID = req.query.id;
     if (recipeID.length > 10 && req.user_id != undefined) {
       const familyRecipes = await DButils.execQuery(
@@ -63,47 +56,19 @@ router.get("/information", async (req, res, next) => {
         let lastRecipes = await DButils.execQuery(
           `SELECT watched_recipes FROM dbo.users WHERE user_id = '${req.user_id}'`
         );
-
         let newWatched;
         if (lastRecipes[0].watched_recipes != "")
           newWatched = newRecipe + "," + lastRecipes[0].watched_recipes;
         else newWatched = newRecipe;
 
-
-
-        // let arr = [newRecipe, lastRecipes[0].watched_recipes];
-
         await DButils.execQuery(
           `UPDATE dbo.users Set watched_recipes =CAST('${newWatched}' AS varchar) WHERE user_id = '${req.user_id}'`
         );
-
-        // let res = await axios.get(`http://localhost:3000/profile/recipeInfo/${recipesP.id}`);
-        //   const watchedRecipesArr = await DButils.execQuery(
-        //     `SELECT watched_recipes FROM dbo.users WHERE user_id = '${req.user_id}'`
-        //   );
-        //   let splitedWatched = watchedRecipesArr[0]; //.favorite_recipse;//.split(",");
-        //   splitedWatched = Object.values(splitedWatched);
-        //   // splited= JSON.stringify(splited);
-        //   splitedWatched = splitedWatched[0].split(",");
-        //   splitedWatched.pop();
-        //   const favoriteRecipesArr = await DButils.execQuery(
-        //     `SELECT favorite_recipes FROM dbo.users WHERE user_id = '${req.user_id}'`
-        //   );
-        //   let splitedfavorite = favoriteRecipesArr[0]; //.favorite_recipse;//.split(",");
-        //   splitedfavorite = Object.values(splitedfavorite);
-        //   // splited= JSON.stringify(splited);
-        //   splitedfavorite = splitedfavorite[0].split(",");
-        //   splitedfavorite.pop();
-        //   recipeDetails = {
-        //     watched: splitedWatched.includes(recipesP.id.toString()),
-        //     saved: splitedfavorite.includes(recipesP.id.toString()),
-        //   };
-        //   recipesP.saved = recipeDetails.saved;
-        //   recipesP.watched = recipeDetails.watched;
-        // }
+      
+         }
         res.send(recipesP);
       }
-    }
+    
   
   } catch (error) {
     next(error);
@@ -133,67 +98,6 @@ router.get("/random", async (req, res, next) => {
     let recipes = random_response.data.recipes; //.map((recipe) => recipe.data);
     let recipesP = await utils.getPrevInfo(recipes);
 
-    // let recipesP2 = await recipesP.map( async (recipe) => {
-    //   const watchedRecipesArr = await DButils.execQuery(
-    //     `SELECT watched_recipes FROM dbo.users WHERE user_id = '${req.user_id}'`
-    //   );
-    //   let splitedWatched = watchedRecipesArr[0]; //.favorite_recipse;//.split(",");
-    //   splitedWatched = Object.values(splitedWatched);
-    //   // splited= JSON.stringify(splited);
-    //   splitedWatched = splitedWatched[0].split(",");
-    //   splitedWatched.pop();
-    //   const favoriteRecipesArr = await DButils.execQuery(
-    //     `SELECT favorite_recipes FROM dbo.users WHERE user_id = '${req.user_id}'`
-    //   );
-    //   let splitedfavorite = favoriteRecipesArr[0]; //.favorite_recipse;//.split(",");
-    //   splitedfavorite = Object.values(splitedfavorite);
-    //   // splited= JSON.stringify(splited);
-    //   splitedfavorite = splitedfavorite[0].split(",");
-    //   splitedfavorite.pop();
-    //   recipeDetails = {
-    //     watched: splitedWatched.includes(recipesP.id.toString()),
-    //     saved: splitedfavorite.includes(recipesP.id.toString()),
-    //   };
-    //   recipe.saved = recipeDetails.saved;
-    //   recipe.watched = recipeDetails.watched;
-    // });
-
-    // console.log(recipesP2);
-
-    //   const watchedRecipesArr = await DButils.execQuery(
-    //     `SELECT watched_recipes FROM dbo.users WHERE user_id = '${req.user_id}'`
-    //   );
-    //   let splitedWatched = watchedRecipesArr[0]; //.favorite_recipse;//.split(",");
-    //   splitedWatched = Object.values(splitedWatched);
-    //   // splited= JSON.stringify(splited);
-    //   splitedWatched = splitedWatched[0].split(",");
-    //   splitedWatched.pop();
-    //   const favoriteRecipesArr = await DButils.execQuery(
-    //     `SELECT favorite_recipes FROM dbo.users WHERE user_id = '${req.user_id}'`
-    //   );
-    //   let splitedfavorite = favoriteRecipesArr[0]; //.favorite_recipse;//.split(",");
-    //   splitedfavorite = Object.values(splitedfavorite);
-    //   // splited= JSON.stringify(splited);
-    //   splitedfavorite = splitedfavorite[0].split(",");
-    //   splitedfavorite.pop();
-    //   recipeDetails = {
-    //     watched: splitedWatched.includes(recipe.id.toString()),
-    //     saved: splitedfavorite.includes(recipe.id.toString()),
-    //   };
-    //   return {
-    //     id: recipe.id,
-    //     image: recipe.image,
-    //     title: recipe.title,
-    //     vegetarian: recipe.vegetarian,
-    //     vegan: recipe.vegan,
-    //     glutenFree: recipe.glutenFree,
-    //     aggregateLikes: recipe.aggregateLikes,
-    //     readyInMinutes: recipe.readyInMinutes,
-    //     watched: recipeDetails.watched,
-    //     saved: recipeDetails.saved,
-    //   };
-    // });
-    // console.log(recipesP2);
     res.send(recipesP);
   } catch (error) {
     next(error);
